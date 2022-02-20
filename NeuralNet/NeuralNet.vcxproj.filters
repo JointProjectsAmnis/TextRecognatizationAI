@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CudaCompile Include="kernel.cu" />
+    <CudaCompile Include="NeuralNet\NeuralNetDebug.cu" />
+    <CudaCompile Include="NeuralNet\CalculateDot.cu" />
+    <CudaCompile Include="NeuralNet\Tset.cu" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Header.h" />
+    <ClInclude Include="Data\Image.h" />
+    <ClInclude Include="CalculateDot.h" />
+    <ClInclude Include="TextureMemory.h" />
+    <ClInclude Include="PathManager.h" />
+    <ClInclude Include="Data\ImageData.h" />
+    <ClInclude Include="Data\Samples\ISample.h" />
+    <ClInclude Include="Data\Samples\SampleImage.h" />
+    <ClInclude Include="Data\SampleData.h" />
+    <ClInclude Include="NeuralNet\INeuralNet.h" />
+    <ClInclude Include="NeuralNet\NeuralNetDebug.cuh" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Data\Image.cpp" />
+    <ClCompile Include="Source.cpp" />
+    <ClCompile Include="Data\ImageData.cpp" />
+    <ClCompile Include="Data\Samples\SampleImage.cpp" />
+    <ClCompile Include="Data\SampleData.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+</Project>
