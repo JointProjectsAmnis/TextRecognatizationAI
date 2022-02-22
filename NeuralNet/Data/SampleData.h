@@ -1,5 +1,4 @@
 #pragma once
-#include "Samples/ISample.h"
 #include "Samples/SampleImage.h"
 #include "ImageData.h"
 
@@ -17,6 +16,7 @@ public:
 	float* getInputData(int id);
 	float* getOutputData(int id);
 
+	//SampleImage* getSampleImage(int id);
 	SampleImage* getSampleImage(int id);
 
 	//Удаляет указатель sample, но не данные в нём

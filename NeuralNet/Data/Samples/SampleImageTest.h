@@ -2,22 +2,22 @@
 #include "ISample.h"
 #include "../Image.h"
 #include "../ImageData.h"
-class SampleImage : public ISample
+class SampleImageTest : public ISample
 {
 public:
 	Image* imageInput = nullptr;
 	Image* imageOutput = nullptr;
 
-	SampleImage();
-	SampleImage(Image* imageInput, Image* imageOutput);
-	~SampleImage();
+	SampleImageTest();
+	SampleImageTest(Image* imageInput, Image* imageOutput);
+	~SampleImageTest();
 
 	virtual void realese() override;
 
 	virtual float* getInputData(int id) override;
 	virtual float* getOutputData(int id) override;
 
-	static SampleImage** createSamples(ImageData* inputData, ImageData* outputData);
+	static SampleImageTest** createSamples(ImageData* inputData, ImageData* outputData);
 	//static SampleData* createSampleData(char* pathInput, char* pathOutput);
 
 };

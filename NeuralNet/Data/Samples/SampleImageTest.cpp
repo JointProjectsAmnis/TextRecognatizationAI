@@ -1,47 +1,47 @@
-#include "SampleImage.h"
+#include "SampleImageTest.h"
 
-SampleImage::SampleImage()
+SampleImageTest::SampleImageTest()
 {
 }
 
-SampleImage::SampleImage(Image* imageInput, Image* imageOutput)
+SampleImageTest::SampleImageTest(Image* imageInput, Image* imageOutput)
 {
     this->imageInput = imageInput;
     this->imageOutput = imageOutput;
 }
 
-SampleImage::~SampleImage()
+SampleImageTest::~SampleImageTest()
 {
     realese();
 }
 
-float* SampleImage::getInputData(int id)
+float* SampleImageTest::getInputData(int id)
 {
     return imageInput->dev_image;
 }
 
-float* SampleImage::getOutputData(int id)
+float* SampleImageTest::getOutputData(int id)
 {
     return imageOutput->dev_image;
 }
 
-SampleImage** SampleImage::createSamples(ImageData* inputData, ImageData* outputData)
+SampleImageTest** SampleImageTest::createSamples(ImageData* inputData, ImageData* outputData)
 {
     int countSamples = inputData->countImages > outputData->countImages ? outputData->countImages : inputData->countImages;
-    SampleImage** sample = new SampleImage*[countSamples];
+    SampleImageTest** sample = new SampleImageTest * [countSamples];
     for (int x = 0; x < countSamples; x++)
-        sample[x] = new SampleImage(inputData->image[x], outputData->image[x]);
+        sample[x] = new SampleImageTest(inputData->image[x], outputData->image[x]);
     return sample;
 }
 
-//SampleData* SampleImage::createSampleData(char* pathInput, char* pathOutput)
+//SampleData* SampleImageTest::createSampleData(char* pathInput, char* pathOutput)
 //{
 //    ImageData* inputData, *outputData;
 //
 //    inputData = new ImageData(pathInput);
 //    outputData = new ImageData(pathOutput);
 //
-//    ISample** sample = (ISample**)SampleImage::createSamples(inputData, outputData);
+//    ISample** sample = (ISample**)SampleImageTest::createSamples(inputData, outputData);
 //    SampleData* sampleData = new SampleData(sample, inputData->countImages);
 //
 //    delete inputData->image;
@@ -50,7 +50,7 @@ SampleImage** SampleImage::createSamples(ImageData* inputData, ImageData* output
 //    return sampleData;
 //}
 
-void SampleImage::realese()
+void SampleImageTest::realese()
 {
     delete imageInput;
     delete imageOutput;

@@ -18,6 +18,7 @@
     <ClInclude Include="Data\SampleData.h" />
     <ClInclude Include="NeuralNet\INeuralNet.h" />
     <ClInclude Include="NeuralNet\NeuralNetDebug.cuh" />
+    <ClInclude Include="Data\Samples\SampleImageTest.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Data\Image.cpp" />
@@ -25,6 +26,7 @@
     <ClCompile Include="Data\ImageData.cpp" />
     <ClCompile Include="Data\Samples\SampleImage.cpp" />
     <ClCompile Include="Data\SampleData.cpp" />
+    <ClCompile Include="Data\Samples\SampleImageTest.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

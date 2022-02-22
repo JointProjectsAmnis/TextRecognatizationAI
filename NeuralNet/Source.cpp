@@ -43,7 +43,7 @@ void main()
 		if (x % 1000 == 0)
 		{
 			net->getImage(image);
-			image->saveImage(PathManager::addNameInstance(pathOutput, path, 1, "\\OutputImage.bmp"));
+			//image->saveImage(PathManager::addNameInstance(pathOutput, path, 1, "\\OutputImage.bmp"));
 		}
 	}
 	

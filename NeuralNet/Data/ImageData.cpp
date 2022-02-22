@@ -57,11 +57,11 @@ int ImageData::saveImages(char* path, const char* prename)
 			strcat(name, prename);
 			PathManager::IntToString(x, name + sizePrename + 1);
 			strcat(name, ".bmp");
-			PathManager::addNameInstanse(path, 1, name);
+			PathManager::addNameInstance(path, 1, name);
 			image[x]->saveImage(path);
 		}
 
-		PathManager::addNameInstanse(path, 1, "\\*");
+		PathManager::addNameInstance(path, 1, "\\*");
 		delete[sizeName] name;
 		return 0;
 	}

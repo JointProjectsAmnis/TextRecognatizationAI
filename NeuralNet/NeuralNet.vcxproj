@@ -97,6 +97,7 @@
     <ClInclude Include="PathManager.h" />
     <ClInclude Include="Data\Samples\SampleImage.h" />
     <ClInclude Include="Data\SampleData.h" />
+    <ClInclude Include="Data\Samples\SampleImageTest.h" />
     <ClInclude Include="TextureMemory.h" />
   </ItemGroup>
   <ItemGroup>
@@ -104,6 +105,7 @@
     <ClCompile Include="Data\ImageData.cpp" />
     <ClCompile Include="Data\Samples\SampleImage.cpp" />
     <ClCompile Include="Data\SampleData.cpp" />
+    <ClCompile Include="Data\Samples\SampleImageTest.cpp" />
     <ClCompile Include="Source.cpp" />
   </ItemGroup>
   <ItemGroup>
