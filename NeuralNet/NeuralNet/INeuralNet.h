@@ -5,8 +5,8 @@ class INeuralNet
 {
 public:
 
-	virtual void forwardPropogation(float* input) = 0;
-	virtual void backPropogation(float* teather) = 0;
+	virtual void forwardPropogation(double* input) = 0;
+	virtual void backPropogation(double* teather) = 0;
 
 	virtual void learnOne(ISample* sample) = 0;
 	virtual void learn(SampleData* sampleData, int countGenerations) = 0;
@@ -14,7 +14,7 @@ public:
 	* Возвращает данные, которые выдала 
 	* нейронная сеть после forwardPropogation
 	*/
-	virtual float* getOutput() = 0;
+	virtual double* getOutput() = 0;
 
 	/*
 	*outImage - выходное изображениеы

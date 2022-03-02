@@ -1,0 +1,6 @@
+1) NetMatrix::deconvolute
+	Error might be with other values of kernelStride, x(kernelOriginX), x(kernelOriginY), x(kernelSize)
+
+2) NetMatrix::unpool
+	x(There's no odd poolSize support)(but maybe something missed)
+ 

@@ -11,7 +11,7 @@
 #include <stdio.h>
 #include <thread>
 
-__global__ void lerpImage(float* image1, float* image2, int sizeX, int sizeY, int channel)
+__global__ void lerpImage(double* image1, double* image2, int sizeX, int sizeY, int channel)
 {
     int idX = (threadIdx.x + blockIdx.x * blockDim.x) * channel;
     int idY = threadIdx.y + blockIdx.y * blockDim.y;
@@ -33,12 +33,12 @@ NeuralNetDebug::NeuralNetDebug(int sizeX, int sizeY, int channel)
     dimY = { COUNT_THREADS, COUNT_THREADS };
 }
 
-void NeuralNetDebug::forwardPropogation(float* input)
+void NeuralNetDebug::forwardPropogation(double* input)
 {
     this->image = input;
 }
 
-void NeuralNetDebug::backPropogation(float* teather)
+void NeuralNetDebug::backPropogation(double* teather)
 {
     lerpImage << < dimX, dimY >> > (image, teather, sizeX, sizeY, channel);
 }
@@ -51,7 +51,7 @@ void NeuralNetDebug::learn(SampleData* sampleData, int countGenerations)
 {
 }
 
-float* NeuralNetDebug::getOutput()
+double* NeuralNetDebug::getOutput()
 {
     return image;
 }

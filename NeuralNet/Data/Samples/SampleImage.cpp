@@ -15,12 +15,12 @@ SampleImage::~SampleImage()
     realese();
 }
 
-float* SampleImage::getInputData(int id)
+double* SampleImage::getInputData(int id)
 {
     return imageInput->dev_image;
 }
 
-float* SampleImage::getOutputData(int id)
+double* SampleImage::getOutputData(int id)
 {
     return imageOutput->dev_image;
 }

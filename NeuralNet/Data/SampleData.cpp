@@ -29,12 +29,12 @@ SampleData::SampleData(char* pathInput, char* pathOutput, int channel)
 	delete outputData->image;
 }
 
-float* SampleData::getInputData(int id)
+double* SampleData::getInputData(int id)
 {
 	return sample[id]->getInputData(id);
 }
 
-float* SampleData::getOutputData(int id)
+double* SampleData::getOutputData(int id)
 {
 	return sample[id]->getOutputData(id);
 }

@@ -19,26 +19,27 @@ void main()
 {
 	setlocale(0, "ru");
 
-	NetMatrix matrix0(2, 2);
-	NetMatrix matrix1(8, 8);
+	DeconvNeuralNetwork::DevconvNeuralNetDesc netDesc{};
 
-	matrix0.matrix[0][0] = 1;
-	matrix0.matrix[1][0] = 2;
+	netDesc.branching = new int[] { 1, 2, 1, 3, 1 };
+	netDesc.defaultKernelOrigin = { 1, 1 };
+	netDesc.defaultKernelSize = 3;
+	netDesc.inputMatricesCount = 6;
+	netDesc.intputMatricesSize = {2, 2};
+	netDesc.layersCount = 5;
+	netDesc.unpoolingLayers = new int[] {0, 1, 0, 1, 0};
+	DeconvNeuralNetwork neuralNetwork = DeconvNeuralNetwork(netDesc);
 
-	matrix0.matrix[0][1] = 3;
-	matrix0.matrix[1][1] = 4;
+	//unsigned char* outImage = new unsigned char[matrix2.matrixSizeX * matrix2.matrixSizeY];
+	//int id = 0;
+	//for (int y = 0; y < matrix2.matrixSizeY; y++)
+	//	for(int x = 0; x < matrix2.matrixSizeX; x++)
+	//	{
+	//		outImage[id] = matrix2.matrix[x][y] * 255;
+	//		id++;
+	//	}
 
-	matrix0.unpool(&matrix1, 4, 4);
-
-	for (int y = 0; y < matrix1.matrixSizeX; y++)
-	{
-		for (int x = 0; x < matrix1.matrixSizeY; x++)
-		{
-			std::cout << matrix1.matrix[x][y] << " ";
-		}
-		std::cout << std::endl;
-	}
-
+	//SOIL_save_image("E:\\Университет\\Английский язык\\Проект (нейросеть)\\TextRecognatizationAI\\Images\\image.bmp", SOIL_SAVE_TYPE_BMP, matrix2.matrixSizeX, matrix2.matrixSizeY, 1, outImage);
 
 
 	//char pathInput[2000];
