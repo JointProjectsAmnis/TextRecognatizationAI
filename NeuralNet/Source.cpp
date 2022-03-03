@@ -21,14 +21,32 @@ void main()
 
 	DeconvNeuralNetwork::DevconvNeuralNetDesc netDesc{};
 
-	netDesc.branching = new int[] { 1, 2, 1, 3, 1 };
+	netDesc.branching = new int[] { 1, 1, 2, 1, 3 };
 	netDesc.defaultKernelOrigin = { 1, 1 };
 	netDesc.defaultKernelSize = 3;
 	netDesc.inputMatricesCount = 6;
 	netDesc.intputMatricesSize = {2, 2};
 	netDesc.layersCount = 5;
-	netDesc.unpoolingLayers = new int[] {0, 1, 0, 1, 0};
+	netDesc.unpoolingLayers = new int[] {1, 1, 0, 1, 0};
 	DeconvNeuralNetwork neuralNetwork = DeconvNeuralNetwork(netDesc);
+
+	for (int l = 0; l < neuralNetwork.layersCount; l++)
+	{
+		for (int y = 0; y < neuralNetwork.matrices[l][0]->matrixSizeY; y++)
+		{
+			for (int m = 0; m < neuralNetwork.matricesCount[l]; m++)
+			{
+				for (int x = 0; x < neuralNetwork.matrices[l][m]->matrixSizeX; x++)
+					std::cout << neuralNetwork.matrices[l][m]->matrix[x][y] << " ";
+				std::cout << " ";
+			}
+			std::cout << std::endl;
+		}
+		std::cout << std::endl << std::endl;
+	}
+
+
+
 
 	//unsigned char* outImage = new unsigned char[matrix2.matrixSizeX * matrix2.matrixSizeY];
 	//int id = 0;

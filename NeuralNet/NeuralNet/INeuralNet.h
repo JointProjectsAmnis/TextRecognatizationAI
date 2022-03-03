@@ -5,8 +5,8 @@ class INeuralNet
 {
 public:
 
-	virtual void forwardPropogation(double* input) = 0;
-	virtual void backPropogation(double* teather) = 0;
+	virtual void forwardPropogation(void* input) = 0;
+	virtual void backPropogation(void* teather) = 0;
 
 	virtual void learnOne(ISample* sample) = 0;
 	virtual void learn(SampleData* sampleData, int countGenerations) = 0;

@@ -25,16 +25,16 @@ public:
 		int2 intputMatricesSize;
 		int inputMatricesCount;
 	};
-	int layersCount;
-	int* branching;
-	int* unpoolingLayers;
+	int layersCount; //
+	int* branching; //
+	int* unpoolingLayers; //
 	int* kernelSize;
 	int* kernelStride;
 	int2 defaultKernelOrigin;
 	int2* kernelOrigin;
-	int2* unpoolingSize;
-	int2 intputMatricesSize;
-	int* matricesCount;
+	int2* unpoolingSize; //
+	int2 intputMatricesSize; //
+	int* matricesCount; //
 
 	NetMatrix*** matrices;
 

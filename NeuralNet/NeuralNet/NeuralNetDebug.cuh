@@ -15,8 +15,8 @@ public:
 
 	NeuralNetDebug(int sizeX, int sizeY, int channel);
 
-	virtual void forwardPropogation(double* input) override;
-	virtual void backPropogation(double* teather) override;
+	virtual void forwardPropogation(void* input) override;
+	virtual void backPropogation(void* teather) override;
 
 	virtual void learnOne(ISample* sample) override;
 	virtual void learn(SampleData* sampleData, int countGenerations) override;

@@ -71,7 +71,7 @@ DeconvNeuralNetwork::DeconvNeuralNetwork(DevconvNeuralNetDesc netDesc)
 	}
 
 	unpoolingSize = new int2[layersCount];
-	if (netDesc.unpoolingLayers)
+	if (netDesc.unpoolingSize)
 		memcpy(unpoolingSize, netDesc.unpoolingLayers, layersCount * sizeof(int2));
 	else
 	{
@@ -103,15 +103,15 @@ DeconvNeuralNetwork::DeconvNeuralNetwork(DevconvNeuralNetDesc netDesc)
 				int2 matrixSize{};
 				if (unpoolingLayers[l] <= 0)
 				{
-					matricesCount[l] = matricesCount[l - 1];
-					if ((matricesCount[l - 1] % branching[l - 1]) != 0)
+					if ((matricesCount[l - 1] % branching[l]) != 0)
 						throw;
+					matricesCount[l] = matricesCount[l - 1] / branching[l];
 					matrixSize = int2{ matrices[l - 1][0]->matrixSizeX, matrices[l - 1][0]->matrixSizeY };
 				}
 				else
 				{
-					matricesCount[l] = matricesCount[l - 1] / branching[l - 1];
-					matrixSize = int2{ matrices[l - 1][0]->matrixSizeX * unpoolingSize[l - 1].x, matrices[l - 1][0]->matrixSizeY * unpoolingSize[l - 1].y };
+					matricesCount[l] = matricesCount[l - 1];
+					matrixSize = int2{ matrices[l - 1][0]->matrixSizeX * unpoolingSize[l].x, matrices[l - 1][0]->matrixSizeY * unpoolingSize[l].y };
 				}
 
 				matrices[l] = new NetMatrix * [matricesCount[l]];
