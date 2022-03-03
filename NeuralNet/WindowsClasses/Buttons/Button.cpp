@@ -8,7 +8,7 @@ Button::Button(
     HGDIOBJ brushSelected,
     BaseWindow* window, 
     HMENU hMenu)
-	: BaseWindow(buttonText, WS_CHILD | BS_PUSHBUTTON | WS_VISIBLE, window->backgroundColor, window->hwnd, hMenu)
+	: BaseWindow(buttonText, BS_PUSHBUTTON | WS_VISIBLE, window->backgroundColor, window, hMenu)
 {
     this->brushHot = brushHot;
     this->brushIdentity = brushIdentity;
@@ -28,7 +28,7 @@ void Button::AddAction(void* param, void(*action)(HWND hwnd, UINT uMsg, WPARAM w
 
 LRESULT Button::HandleMessage(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-    if(action.action)
+    if (action.action)
         action.action(hwnd, uMsg, wParam, lParam, action.param);
     return DefWindowProc(hwnd, uMsg, wParam, lParam);
 }

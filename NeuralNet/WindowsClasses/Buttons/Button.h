@@ -10,7 +10,6 @@ public:
 	HGDIOBJ brushHot;
 	HGDIOBJ brushSelected;
 
-	BaseWindow* parent;
 	Action action = {0};
 	Button(
 		LPCWSTR buttonText,

@@ -1,6 +1,7 @@
 #include "BaseWindow.h"
 
 HMENU BaseWindow::hMenuCounter = 0;
+HPEN BaseWindow::invisePen = CreatePen(PS_NULL, 0, NULL);
 
 LRESULT CALLBACK BaseWindow::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
@@ -26,17 +27,17 @@ BaseWindow::BaseWindow(
     LPCWSTR lpWindowName,
     DWORD dwStyle,
     HBRUSH backgroundColor,
-    HWND hWndParent,
+    BaseWindow* parent,
     HMENU hMenu,
     DWORD dwExStyle)
 {
     this->lpWindowName = lpWindowName;
-    this->dwStyle = dwStyle;
     this->backgroundColor = backgroundColor;
-    this->hWndParent = hWndParent;
+    this->parent = parent;
     this->dwExStyle = dwExStyle;
     this->hMenu = hMenu == (HMENU)(-1) ? hMenuCounter : hMenu;
     hMenuCounter = hMenu == (HMENU)(-1) ? (HMENU)((int)hMenuCounter + 1) : hMenuCounter;
+    this->dwStyle = parent ? dwStyle | WS_CHILD : dwStyle;
 
     this->hwnd = NULL;
 }
@@ -69,7 +70,7 @@ void BaseWindow::Create(
         X, Y, 
         nWidth, 
         nHeight, 
-        hWndParent, 
+        parent ? parent->hwnd : NULL,
         hMenu, 
         GetModuleHandle(NULL), 
         (LPVOID)this);
@@ -82,12 +83,18 @@ void BaseWindow::Show(int nCmdShow)
 
 LRESULT BaseWindow::HandleMessage(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-    if (uMsg == WM_COMMAND)
+    switch (uMsg)
+    {
+
+    case WM_COMMAND:
+    {
         for (int x = 0; x < daughtWindows.size(); x++)
             if (wParam == (WPARAM)daughtWindows[x]->hMenu)
                 return daughtWindows[x]->HandleMessage(hwnd, uMsg, wParam, lParam);
+    }
+    break;
 
-    if (uMsg == WM_NOTIFY)
+    case WM_NOTIFY:
     {
         LPNMHDR item = (LPNMHDR)lParam;
         for (int x = 0; x < daughtWindows.size(); x++)
@@ -95,10 +102,23 @@ LRESULT BaseWindow::HandleMessage(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lP
                 if (item->idFrom == (UINT_PTR)daughtWindows[x]->hMenu)
                     return daughtWindows[x]->HandleNotify(hwnd, uMsg, wParam, lParam, item);
     }
+    break;
 
-    if (uMsg == WM_CTLCOLORBTN)
+    case WM_CTLCOLORBTN:
     {
-        return (LRESULT)backgroundColor;
+        return parent ? (LRESULT)parent->backgroundColor : (LRESULT)backgroundColor;
+    }
+    break;
+
+    case WM_PAINT:
+    {
+        PAINTSTRUCT ps;
+        HDC hdc = BeginPaint(hwnd, &ps);
+        FillRect(hdc, &ps.rcPaint, backgroundColor);
+        EndPaint(hwnd, &ps);
+    }
+    break;
+
     }
 
     return DefWindowProc(hwnd, uMsg, wParam, lParam);
@@ -107,6 +127,12 @@ LRESULT BaseWindow::HandleMessage(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lP
 void BaseWindow::AddWindow(BaseWindow* window)
 {
     daughtWindows.push_back(window);
+}
+
+void BaseWindow::SetBackgroundColor(HBRUSH brush)
+{
+    this->backgroundColor = (HBRUSH)brush;
+    InvalidateRect(hwnd, NULL, TRUE);
 }
 
 void BaseWindow::SetFont(HFONT font, COLORREF color)

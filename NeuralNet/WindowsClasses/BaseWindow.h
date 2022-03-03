@@ -11,7 +11,7 @@ public:
 	HWND hwnd;
     LPCWSTR lpWindowName;
     DWORD dwStyle;
-    HWND hWndParent;
+    BaseWindow* parent;
     HMENU hMenu;
     DWORD dwExStyle;
     HBRUSH backgroundColor;
@@ -21,6 +21,7 @@ public:
     COLORREF colorFont = RGB(0, 0, 0);
 
     static HMENU hMenuCounter;
+    static HPEN invisePen;
 
     std::vector<BaseWindow*> daughtWindows = std::vector<BaseWindow*>();
 
@@ -30,7 +31,7 @@ public:
         LPCWSTR lpWindowName,
         DWORD dwStyle,
         HBRUSH backgroundColor = WHITE_BRUSH,
-        HWND hWndParent = NULL,
+        BaseWindow* parent = nullptr,
         HMENU hMenu = AUTO_CODE,
         DWORD dwExStyle = NULL);
 
@@ -41,8 +42,13 @@ public:
         int nHeight = CW_USEDEFAULT);
 
     void Show(int nCmdShow);
+
+    //Добавление окна
     void AddWindow(BaseWindow* window);
+
+    //Настройка внешнего вида окна
     void SetFont(HFONT font, COLORREF color);
+    void SetBackgroundColor(HBRUSH brush);
 
 protected:
 	virtual LRESULT HandleMessage(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
