@@ -77,7 +77,7 @@ public:
 
 	static void getFolderWithExe(char* path)
 	{
-		DWORD sizePath = GetModuleFileName(NULL, path, 2000);
+		DWORD sizePath = GetModuleFileNameA(NULL, path, 2000);
 		cutLastName(path, 1, sizePath);
 	}
 
@@ -85,15 +85,15 @@ public:
 	{
 		int size = strlen(path);
 
-		WIN32_FIND_DATA FindFileData;
+		WIN32_FIND_DATAA FindFileData;
 		HANDLE hFind;
-		hFind = FindFirstFile(path, &FindFileData);
+		hFind = FindFirstFileA(path, &FindFileData);
 
 		if (hFind == INVALID_HANDLE_VALUE)
 			throw;
 
-		FindNextFile(hFind, &FindFileData);
-		FindNextFile(hFind, &FindFileData);
+		FindNextFileA(hFind, &FindFileData);
+		FindNextFileA(hFind, &FindFileData);
 
 		std::vector<char*> namesVec = std::vector<char*>();
 
@@ -106,7 +106,7 @@ public:
 			str[size + sizeName - 1] = '\0';
 
 			namesVec.push_back(str);
-		} while (FindNextFile(hFind, &FindFileData));
+		} while (FindNextFileA(hFind, &FindFileData));
 
 		char** names = new char* [namesVec.size()];
 		for (int x = 0; x < namesVec.size(); x++)

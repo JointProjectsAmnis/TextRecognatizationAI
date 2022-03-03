@@ -19,6 +19,11 @@
     <ClInclude Include="NeuralNet\INeuralNet.h" />
     <ClInclude Include="NeuralNet\NeuralNetDebug.cuh" />
     <ClInclude Include="Data\Samples\SampleImageTest.h" />
+    <ClInclude Include="WindowsClasses\BaseWindow.h" />
+    <ClInclude Include="WindowsClasses\WindowMain.h" />
+    <ClInclude Include="WindowsClasses\Buttons\Button.h" />
+    <ClInclude Include="Source.h" />
+    <ClInclude Include="WindowsClasses\Action.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Data\Image.cpp" />
@@ -27,6 +32,9 @@
     <ClCompile Include="Data\Samples\SampleImage.cpp" />
     <ClCompile Include="Data\SampleData.cpp" />
     <ClCompile Include="Data\Samples\SampleImageTest.cpp" />
+    <ClCompile Include="WindowsClasses\BaseWindow.cpp" />
+    <ClCompile Include="WindowsClasses\WindowMain.cpp" />
+    <ClCompile Include="WindowsClasses\Buttons\Button.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
