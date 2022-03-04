@@ -15,7 +15,7 @@ public:
     HMENU hMenu;
     DWORD dwExStyle;
     HBRUSH backgroundColor;
-    bool toCreateNewClass = true;
+    bool toCreateNewClass = false;
 
     HFONT font = NULL;
     COLORREF colorFont = RGB(0, 0, 0);

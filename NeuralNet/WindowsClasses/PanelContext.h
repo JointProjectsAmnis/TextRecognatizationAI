@@ -4,7 +4,7 @@
 class PanelContext : public Panel
 {
 public:
-	PanelContext(LPCWSTR lpWindowName, HBRUSH backgroundColor, BaseWindow* parent, HMENU hMenu = NULL, DWORD dwStyle = NULL) :
+	PanelContext(LPCWSTR lpWindowName, HBRUSH backgroundColor, BaseWindow* parent, HMENU hMenu = AUTO_CODE, DWORD dwStyle = NULL) :
 		Panel(lpWindowName, backgroundColor, parent, hMenu, dwStyle) {}
 
 	virtual LRESULT HandleMessage(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) override
