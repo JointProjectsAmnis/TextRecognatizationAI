@@ -1,4 +1,8 @@
 #include "BaseWindow.h"
+#include "Commanded.h"
+
+#include "IHandleNotify.h"
+#include "IHandleNotifyStatic.h"
 
 HMENU BaseWindow::hMenuCounter = 0;
 HPEN BaseWindow::invisePen = CreatePen(PS_NULL, 0, NULL);
@@ -40,6 +44,9 @@ BaseWindow::BaseWindow(
     this->dwStyle = parent ? dwStyle | WS_CHILD : dwStyle;
 
     this->hwnd = NULL;
+
+    if (parent)
+        parent->AddWindow(this);
 }
 
 void BaseWindow::Create(
@@ -61,6 +68,22 @@ void BaseWindow::Create(
 
         RegisterClass(&wc);
     }
+
+    //if (false)
+    //{
+    //    hwnd = CreateWindowEx(
+    //        dwExStyle,
+    //        ClassName(),
+    //        lpWindowName,
+    //        dwStyle,
+    //        X, Y,
+    //        nWidth,
+    //        nHeight,
+    //        parent ? parent->hwnd : NULL,
+    //        hMenu,
+    //        GetModuleHandle(NULL),
+    //        (LPVOID)this);
+    //}
 
     hwnd = CreateWindowEx(
         dwExStyle, 
@@ -88,19 +111,39 @@ LRESULT BaseWindow::HandleMessage(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lP
 
     case WM_COMMAND:
     {
-        for (int x = 0; x < daughtWindows.size(); x++)
-            if (wParam == (WPARAM)daughtWindows[x]->hMenu)
-                return daughtWindows[x]->HandleMessage(hwnd, uMsg, wParam, lParam);
+        for (int x = 0; x < childWindow.size(); x++)
+            if (wParam == (WPARAM)childWindow[x]->hMenu)
+            {
+                Commanded* commanded = dynamic_cast<Commanded*>(childWindow[x]);
+                if(commanded)
+                    return commanded->InvokeAction(hwnd, uMsg, wParam, lParam);
+            }
     }
     break;
 
     case WM_NOTIFY:
     {
         LPNMHDR item = (LPNMHDR)lParam;
-        for (int x = 0; x < daughtWindows.size(); x++)
+        for (int x = 0; x < childWindow.size(); x++)
             if (item->code == NM_CUSTOMDRAW)
-                if (item->idFrom == (UINT_PTR)daughtWindows[x]->hMenu)
-                    return daughtWindows[x]->HandleNotify(hwnd, uMsg, wParam, lParam, item);
+                if (item->idFrom == (UINT_PTR)childWindow[x]->hMenu)
+                {
+                    IHandleNotify* notify = dynamic_cast<IHandleNotify*>(childWindow[x]);
+                    if(notify)
+                        return notify->HandleNotify(hwnd, uMsg, wParam, lParam, item);
+                }
+    }
+    break;
+
+    case WM_CTLCOLORSTATIC:
+    {
+        for(int x = 0; x < childWindow.size(); x++)
+            if (childWindow[x]->hwnd == (HWND)lParam)
+            {
+                IHandleNotifyStatic* notifyStatic = dynamic_cast<IHandleNotifyStatic*>(childWindow[x]);
+                if (notifyStatic)
+                    return notifyStatic->HandleNotifyStatic(hwnd, uMsg, wParam, lParam);
+            }
     }
     break;
 
@@ -109,16 +152,6 @@ LRESULT BaseWindow::HandleMessage(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lP
         return parent ? (LRESULT)parent->backgroundColor : (LRESULT)backgroundColor;
     }
     break;
-
-    case WM_PAINT:
-    {
-        PAINTSTRUCT ps;
-        HDC hdc = BeginPaint(hwnd, &ps);
-        FillRect(hdc, &ps.rcPaint, backgroundColor);
-        EndPaint(hwnd, &ps);
-    }
-    break;
-
     }
 
     return DefWindowProc(hwnd, uMsg, wParam, lParam);
@@ -126,7 +159,7 @@ LRESULT BaseWindow::HandleMessage(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lP
 
 void BaseWindow::AddWindow(BaseWindow* window)
 {
-    daughtWindows.push_back(window);
+    childWindow.push_back(window);
 }
 
 void BaseWindow::SetBackgroundColor(HBRUSH brush)
@@ -139,9 +172,4 @@ void BaseWindow::SetFont(HFONT font, COLORREF color)
 {
     this->font = font;
     this->colorFont = color;
-}
-
-LRESULT BaseWindow::HandleNotify(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam, LPNMHDR someItem)
-{
-    return DefWindowProc(hwnd, uMsg, wParam, lParam);
 }

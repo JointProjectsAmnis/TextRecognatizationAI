@@ -23,7 +23,7 @@ public:
     static HMENU hMenuCounter;
     static HPEN invisePen;
 
-    std::vector<BaseWindow*> daughtWindows = std::vector<BaseWindow*>();
+    std::vector<BaseWindow*> childWindow = std::vector<BaseWindow*>();
 
 	static LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
@@ -52,7 +52,6 @@ public:
 
 protected:
 	virtual LRESULT HandleMessage(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
-    virtual LRESULT HandleNotify(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam, LPNMHDR someItem);
 	virtual const TCHAR* ClassName() = 0;
 };
 

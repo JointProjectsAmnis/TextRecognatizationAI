@@ -8,29 +8,13 @@ Button::Button(
     HGDIOBJ brushSelected,
     BaseWindow* window, 
     HMENU hMenu)
-	: BaseWindow(buttonText, BS_PUSHBUTTON | WS_VISIBLE, window->backgroundColor, window, hMenu)
+	: Commanded(buttonText, BS_PUSHBUTTON | WS_VISIBLE, window->backgroundColor, window, hMenu)
 {
     this->brushHot = brushHot;
     this->brushIdentity = brushIdentity;
     this->brushSelected = brushSelected;
 	this->parent = window;
 	this->toCreateNewClass = false;
-
-	window->AddWindow(this);
-}
-
-//Должны быть такие аргументы (HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
-void Button::AddAction(void* param, void(*action)(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam, void* param))
-{
-    this->action.param = param;
-    this->action.action = action;
-}
-
-LRESULT Button::HandleMessage(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
-{
-    if (action.action)
-        action.action(hwnd, uMsg, wParam, lParam, action.param);
-    return DefWindowProc(hwnd, uMsg, wParam, lParam);
 }
 
 LRESULT Button::HandleNotify(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam, LPNMHDR someItem)
