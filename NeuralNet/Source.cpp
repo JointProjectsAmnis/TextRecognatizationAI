@@ -73,7 +73,6 @@ void main()
 			LPWSTR text;
 			item->GetDisplayName(SIGDN_FILESYSPATH, &text);
 			lable->SetText(PathManager::getLastName(text, 1));
-
 		});
 	button->Show(1);
 
