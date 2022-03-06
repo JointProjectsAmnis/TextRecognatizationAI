@@ -49,6 +49,7 @@ public:
     //Настройка внешнего вида окна
     void SetFont(HFONT font, COLORREF color);
     void SetBackgroundColor(HBRUSH brush);
+    void SetText(WCHAR* text);
 
 protected:
 	virtual LRESULT HandleMessage(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);

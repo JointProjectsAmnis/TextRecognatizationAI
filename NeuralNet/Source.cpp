@@ -54,25 +54,55 @@ void main()
 	IFileOpenDialog* openDialog;
 	CoCreateInstance(CLSID_FileOpenDialog, NULL, CLSCTX_ALL, IID_IFileOpenDialog, (void**)&openDialog);
 
-	Lable* lable = new Lable(L"Hello, world!", RGB(255, 255, 255), font, windowMain);
-	lable->Create(115, 275, 100, 20);
-	lable->Show(1);
+	COMDLG_FILTERSPEC rgSpec[] =
+	{
+		{L"jpg, png", L"*.jpg;*.jpeg;*.png"}
+	};
+	openDialog->SetFileTypes(1, rgSpec);
+
+	//Lable* lable = new Lable(L"Hello, world!", RGB(255, 255, 255), font, windowMain);
+	//lable->Create(115, 275, 100, 20);
+	//lable->Show(1);
 
 	Button* button = new Button(L"Choose image", brushIdentity.GetBrush(), brushHot.GetBrush(), brushSelected.GetBrush(), windowMain);
 	button->Create(8, 275, 100, 20);
 	button->SetFont(font, RGB(255, 255, 255));
-	void* actionData[] = {openDialog, lable};
+	void* actionData[] = {openDialog, button};
 	button->AddAction(actionData, [](HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam, void* param)
 		{
 			IFileOpenDialog* openDialog = (IFileOpenDialog*)(*(void**)param);
-			Lable* lable = (Lable*)(*((void**)param + 1));
+			Button* button = (Button*)(*((void**)param + 1));
 			openDialog->Show(NULL);
-			IShellItem* item;
+
+			IShellItem* item = nullptr;
 			openDialog->GetResult(&item);
-			//WCHAR text[500] = L"123";
-			LPWSTR text;
-			item->GetDisplayName(SIGDN_FILESYSPATH, &text);
-			lable->SetText(PathManager::getLastName(text, 1));
+
+			if (item)
+			{
+				LPWSTR text, textMaxSize;
+				item->GetDisplayName(SIGDN_FILESYSPATH, &text);
+
+				text = PathManager::getLastName(text, 1);
+
+				int maxSize = 13;
+				if (lstrlenW(text) > maxSize)
+				{
+					textMaxSize = (LPWSTR)calloc(maxSize + 4, sizeof(WCHAR));
+					memcpy(textMaxSize, text, sizeof(WCHAR) * maxSize);
+
+					textMaxSize[maxSize] =     L'.';
+					textMaxSize[maxSize + 1] = L'.';
+					textMaxSize[maxSize + 2] = L'.';
+					textMaxSize[maxSize + 3] = L'\0';
+
+					button->SetText(textMaxSize);
+					free(textMaxSize);
+				}
+				else
+				{
+					button->SetText(text);
+				}
+			}
 		});
 	button->Show(1);
 

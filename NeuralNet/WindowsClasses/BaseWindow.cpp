@@ -173,3 +173,8 @@ void BaseWindow::SetFont(HFONT font, COLORREF color)
     this->font = font;
     this->colorFont = color;
 }
+
+void BaseWindow::SetText(WCHAR* text)
+{
+    SendMessage(hwnd, WM_SETTEXT, NULL, (LPARAM)text);
+}

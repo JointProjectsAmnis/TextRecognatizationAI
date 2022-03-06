@@ -19,11 +19,6 @@ Lable::Lable(
 	SetFont(font, colorText);
 }
 
-void Lable::SetText(WCHAR* text)
-{
-	SendMessage(hwnd, WM_SETTEXT, NULL, (LPARAM)text);
-}
-
 const TCHAR* Lable::ClassName()
 {
 	return L"static";

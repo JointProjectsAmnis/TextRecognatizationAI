@@ -14,8 +14,6 @@ public:
         HMENU hMenu = AUTO_CODE,
         DWORD dwExStyle = NULL);
 
-    void SetText(WCHAR* text);
-
     virtual const TCHAR* ClassName();
     virtual LRESULT HandleNotifyStatic(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) override;
 };
