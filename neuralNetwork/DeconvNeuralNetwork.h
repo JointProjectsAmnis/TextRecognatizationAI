@@ -35,11 +35,12 @@ public:
 	int2* unpoolingSize; //
 	int2 intputMatricesSize; //
 	int* matricesCount; //
-
 	NetMatrix*** matrices;
 
-
 	DECL DeconvNeuralNetwork(DevconvNeuralNetDesc netDesc);
+	DECL void forwardPropagation(void* input, const int inputDataSize);
+	//DECL void backPropagation(void* output, );
+	DECL void setAllWeightsRandom(int seed, int leftEdge, int rightEdge, int accuracy);
 	DECL ~DeconvNeuralNetwork();
 private:
 	int defaultKernelSize;

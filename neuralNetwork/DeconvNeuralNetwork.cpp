@@ -124,6 +124,41 @@ DeconvNeuralNetwork::DeconvNeuralNetwork(DevconvNeuralNetDesc netDesc)
 	else throw;
 }
 
+void DeconvNeuralNetwork::forwardPropagation(void* input, const int inputDataSize)
+{
+	int inputMatricesDataCount = ((intputMatricesSize.x * intputMatricesSize.y) * matricesCount[0]) * sizeof(matrices[0][0]->matrix[0][0]);
+	if (inputMatricesDataCount != inputDataSize) throw;
+
+	for (int m = 0; m < matricesCount[0]; m++)
+	{
+		for(int y = 0; y < matrices[0][m]->matrixSizeY; y++)
+			for (int x = 0; x < matrices[0][m]->matrixSizeX; x++)
+			{
+				int id = x + y * matrices[0][m]->matrixSizeX + m * matrices[0][m]->matrixSizeX * matrices[0][m]->matrixSizeY;
+				matrices[0][m]->matrix[x][y] = ((double*)input)[id];
+			}
+	}
+
+	for(int l = 0; l < layersCount - 1; l++)
+		for (int m = 0; m < matricesCount[l]; m++)
+		{
+			if (unpoolingLayers[l + 1] > 0)
+				matrices[l][m]->unpool(matrices[l + 1][m], unpoolingSize[l + 1].x, unpoolingSize[l + 1].y);
+			else
+			{
+				int nextLayerMatrixID = m / branching[l + 1];
+				matrices[l][m]->deconvolute(matrices[l + 1][nextLayerMatrixID]);
+			}
+		}
+}
+
+void DeconvNeuralNetwork::setAllWeightsRandom(int seed, int leftEdge, int rightEdge, int accuracy)
+{
+	for(int l = 0; l < layersCount; l++)
+		for (int m = 0; m < matricesCount[l]; m++)
+			matrices[l][m]->setRandomWeights(seed, leftEdge, rightEdge, accuracy);
+}
+
 DeconvNeuralNetwork::~DeconvNeuralNetwork()
 {
 	delete[layersCount] branching;

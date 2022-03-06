@@ -11,3 +11,7 @@
 	4. x(inputMatricesSize)
 	5. x(unpoolingSize)
 	6. x(matricesCount)
+
+4) DeconvNeuralNetwork::forwardPropagation HERE MAY BE AN ERROR
+	1. x(input)
+	2. x(inputDataSize)

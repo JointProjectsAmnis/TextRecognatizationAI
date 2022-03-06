@@ -34,6 +34,17 @@ NetMatrix::NetMatrix(int matrixSizeX, int matrixSizeY, int kernelSize, int kerne
 		kernel = nullptr;
 }
 
+NetMatrix::~NetMatrix()
+{
+	for (int x = 0; x < matrixSizeX; x++)
+		delete[matrixSizeY] matrix[x];
+	delete[matrixSizeX] matrix;
+
+	for (int x = 0; x < kernelSize; x++)
+		delete[kernelSize] kernel[x];
+	delete[kernelSize] kernel;
+}
+
 void NetMatrix::clear(double value)
 {
 	for (int y = 0; y < matrixSizeY; y++)
@@ -47,6 +58,27 @@ double NetMatrix::sigmoid(double x)
 	return 1 / (1 + pow(e, -x));
 }
 
+void NetMatrix::setRandomWeights(int seed, int module, double devider, double offset)
+{
+	srand(seed);
+	for(int y = 0; y < kernelSize; y++)
+		for (int x = 0; x < kernelSize; x++)
+			kernel[x][y] = ((rand() % module) / devider) + offset;
+}
+
+void NetMatrix::setRandomWeights(int seed, int leftEdge, int rightEdge, int accuracy)
+{
+	if (leftEdge > rightEdge) throw;
+
+	int length = rightEdge - leftEdge;
+	srand(seed);
+	for (int y = 0; y < kernelSize; y++)
+		for (int x = 0; x < kernelSize; x++)
+		{
+			int randomValue = rand();
+			kernel[x][y] = ((randomValue % (length * accuracy)) / (double)accuracy) + leftEdge;
+		}
+}
 
 void NetMatrix::unpool(NetMatrix* dest, int poolSizeX, int poolSizeY)
 {
@@ -68,8 +100,8 @@ void NetMatrix::unpool(NetMatrix* dest, int poolSizeX, int poolSizeY)
 
 void NetMatrix::deconvolute(NetMatrix* dest)
 {
-	for (int y = 0; y < matrixSizeX; y += kernelStride)
-		for (int x = 0; x < matrixSizeY; x += kernelStride)
+	for (int y = 0; y < matrixSizeY; y += kernelStride)
+		for (int x = 0; x < matrixSizeX; x += kernelStride)
 		{
 			int kernelLeftUpX = x - kernelOriginX;
 			int kernelLeftUpY = y - kernelOriginY;
@@ -81,17 +113,12 @@ void NetMatrix::deconvolute(NetMatrix* dest)
 					int posY = kernelLeftUpY + kernelY;
 
 					if (posX >= 0 && posY >= 0 && posX < matrixSizeX && posY < matrixSizeY)
-					{
-						//if (posX == 1 && posY == 1)
-						//	int point = 0;
-						dest->matrix[posX][posY] += matrix[x][y] * kernel[kernelX][kernelY];
-					}
-						
+						dest->matrix[posX][posY] += matrix[x][y] * kernel[kernelX][kernelY];	
 				}
 		}
 
-	for (int y = 0; y < dest->matrixSizeX; y++)
-		for (int x = 0; x < dest->matrixSizeY; x++)
+	for (int y = 0; y < dest->matrixSizeY; y++)
+		for (int x = 0; x < dest->matrixSizeX; x++)
 			dest->matrix[x][y] = sigmoid(dest->matrix[x][y]);
 }
 
