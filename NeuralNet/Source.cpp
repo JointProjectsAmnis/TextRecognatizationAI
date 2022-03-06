@@ -37,18 +37,18 @@ void main()
 		15, 0, 0, 0, FW_REGULAR, 0, 0, 0, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS,
 		CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH, L"Segoe UI");
 
-	Panel windowMain = Panel(L"Sample window", brushBackground.GetBrush(), NULL, NULL, WS_OVERLAPPEDWINDOW);
-	windowMain.Create(CW_USEDEFAULT, CW_USEDEFAULT, 590, 350);
+	Panel* windowMain = new Panel(L"Sample window", brushBackground.GetBrush(), NULL, NULL, WS_OVERLAPPEDWINDOW);
+	windowMain->Create(CW_USEDEFAULT, CW_USEDEFAULT, 590, 350);
 
-	PanelContext* context = new PanelContext(L"Context", brushIdentity.GetBrush(), &windowMain);
+	PanelContext* context = new PanelContext(L"Context", brushIdentity.GetBrush(), windowMain);
 	context->Create(8, 8, 250, 250);
 	context->Show(1);
 
-	PanelContext* textPanel = new PanelContext(L"Context1", brushIdentity.GetBrush(), &windowMain);
+	PanelContext* textPanel = new PanelContext(L"Context1", brushIdentity.GetBrush(), windowMain);
 	textPanel->Create(8 + 300 + 8, 8, 250, 250);
 	textPanel->Show(1);
 
-	Button* button = new Button(L"Choose image", brushIdentity.GetBrush(), brushHot.GetBrush(), brushSelected.GetBrush(), &windowMain);
+	Button* button = new Button(L"Choose image", brushIdentity.GetBrush(), brushHot.GetBrush(), brushSelected.GetBrush(), windowMain);
 	button->Create(8, 275, 100, 20);
 	button->SetFont(font, RGB(255, 255, 255));
 	button->AddAction(nullptr, [](HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam, void* param) 
@@ -57,9 +57,8 @@ void main()
 		});
 	button->Show(1);
 
-
-	Lable* lable = new Lable(L"Hello, world!", RGB(255, 200, 200), font, &windowMain);
-	lable->Create(200, 275, 100, 20);
+	Lable* lable = new Lable(L"Hello, world!", RGB(255, 255, 255), font, context);
+	lable->Create(20, 20, 100, 20);
 	lable->Show(1);
 
 
@@ -86,7 +85,7 @@ void main()
 	//	}
 	//}
 
-	windowMain.Show(1);
+	windowMain->Show(1);
 
 
 	MSG msg = {};
