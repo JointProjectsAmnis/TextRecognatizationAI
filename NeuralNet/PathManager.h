@@ -33,6 +33,39 @@ public:
 	}
 
 	/*
+	* Возвращает указатель на последнюю часть пути (до count знаков '\' c конца)
+	* 
+	* сount - количество удаления до знака '\\'.
+	*	Пример: если path = "Man//hello//world", то при count = 2, путь будет следующим path = "hello//world"
+	* 
+	* sizePath - размер строчки
+	*/
+
+	static char* getLastName(char* path, int count, int sizePath = -1)
+	{
+		if (sizePath == -1) sizePath = strlen(path);
+		int countSlash = 0;
+
+		int x = sizePath - 1;
+		for (int i = 0; i < count; i++)
+			for (x; x >= 0 && path[x] != '\\'; x--);
+
+		return path + x + 1;
+	}
+
+	static wchar_t* getLastName(wchar_t* path, int count, int sizePath = -1)
+	{
+		if (sizePath == -1) sizePath = lstrlenW(path);
+		int countSlash = 0;
+
+		int x = sizePath - 1;
+		for (int i = 0; i < count; i++)
+			for (x; x >= 0 && path[x] != '\\'; x--);
+
+		return path + x + 1;
+	}
+
+	/*
 	* Удаляет часть названия пути с конца до первого попавшегося знака '\\',
 	* а затем вставляет в конец строку ins
 	*

@@ -3,6 +3,7 @@ name='Microsoft.Windows.Common-Controls' version='6.0.0.0' \
 processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 
 #include <windows.h>
+#include <shobjidl.h>
 #include <iostream>
 #include "WindowsClasses/Panel.h"
 #include "WindowsClasses/PanelContext.h"
@@ -27,6 +28,8 @@ HFONT font;
 
 void main()
 {
+	CoInitializeEx(NULL, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);
+
 	int countX = 10;
 	int countY = 10;
 
@@ -48,18 +51,31 @@ void main()
 	textPanel->Create(8 + 300 + 8, 8, 250, 250);
 	textPanel->Show(1);
 
+	IFileOpenDialog* openDialog;
+	CoCreateInstance(CLSID_FileOpenDialog, NULL, CLSCTX_ALL, IID_IFileOpenDialog, (void**)&openDialog);
+
+	Lable* lable = new Lable(L"Hello, world!", RGB(255, 255, 255), font, windowMain);
+	lable->Create(115, 275, 100, 20);
+	lable->Show(1);
+
 	Button* button = new Button(L"Choose image", brushIdentity.GetBrush(), brushHot.GetBrush(), brushSelected.GetBrush(), windowMain);
 	button->Create(8, 275, 100, 20);
 	button->SetFont(font, RGB(255, 255, 255));
-	button->AddAction(nullptr, [](HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam, void* param) 
+	void* actionData[] = {openDialog, lable};
+	button->AddAction(actionData, [](HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam, void* param)
 		{
-			std::cout << "Hello, world!" << std::endl;
+			IFileOpenDialog* openDialog = (IFileOpenDialog*)(*(void**)param);
+			Lable* lable = (Lable*)(*((void**)param + 1));
+			openDialog->Show(NULL);
+			IShellItem* item;
+			openDialog->GetResult(&item);
+			//WCHAR text[500] = L"123";
+			LPWSTR text;
+			item->GetDisplayName(SIGDN_FILESYSPATH, &text);
+			lable->SetText(PathManager::getLastName(text, 1));
+
 		});
 	button->Show(1);
-
-	Lable* lable = new Lable(L"Hello, world!", RGB(255, 255, 255), font, context);
-	lable->Create(20, 20, 100, 20);
-	lable->Show(1);
 
 
 	//TCHAR buttonText[256] = L"\0";
