@@ -139,13 +139,13 @@ static wchar_t* addNameInstance(wchar_t* path, wchar_t* outPath, int count, cons
 
 static void getFolderWithExe(char* path)
 {
-	DWORD sizePath = GetModuleFileNameA(NULL, path, 2000);
+	DWORD sizePath = GetModuleFileNameA(NULL, path, strlen(path));
 	cutLastName(path, 1, sizePath);
 }
 
 static void getFolderWithExe(wchar_t* path)
 {
-	DWORD sizePath = GetModuleFileNameW(NULL, path, 2000);
+	DWORD sizePath = GetModuleFileNameW(NULL, path, lstrlenW(path));
 	cutLastName(path, 1, sizePath);
 }
 

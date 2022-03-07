@@ -19,8 +19,6 @@ Button::Button(
 
 LRESULT Button::HandleNotify(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam, LPNMHDR someItem)
 {
-    static HGDIOBJ invisePen = CreatePen(PS_NULL, 0, 0);
-
         LPNMCUSTOMDRAW item = (LPNMCUSTOMDRAW)someItem;
 
         if (item->uItemState & CDIS_SELECTED)

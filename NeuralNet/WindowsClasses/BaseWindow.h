@@ -23,6 +23,14 @@ public:
     static HMENU hMenuCounter;
     static HPEN invisePen;
 
+    struct ActionPaint
+    {
+        void* param;
+        void(*action)(BaseWindow* window, PAINTSTRUCT ps, HDC hdc, void* param);
+    };
+
+    ActionPaint actionPaint = { 0 };
+
     std::vector<BaseWindow*> childWindow = std::vector<BaseWindow*>();
 
 	static LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
@@ -45,6 +53,7 @@ public:
 
     //Добавление окна
     void AddWindow(BaseWindow* window);
+    void AddActionPaint(void* param, void(*action)(BaseWindow* window, PAINTSTRUCT ps, HDC hdc, void* param));
 
     //Настройка внешнего вида окна
     void SetFont(HFONT font, COLORREF color);

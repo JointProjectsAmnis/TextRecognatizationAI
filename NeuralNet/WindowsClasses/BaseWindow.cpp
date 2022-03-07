@@ -152,6 +152,19 @@ LRESULT BaseWindow::HandleMessage(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lP
         return parent ? (LRESULT)parent->backgroundColor : (LRESULT)backgroundColor;
     }
     break;
+
+    case WM_PAINT:
+    {
+        PAINTSTRUCT ps;
+        HDC hdc = BeginPaint(hwnd, &ps);
+
+        if (actionPaint.action != nullptr)
+            actionPaint.action(this, ps, hdc, actionPaint.param);
+
+        EndPaint(hwnd, &ps);
+    }
+    break;
+
     }
 
     return DefWindowProc(hwnd, uMsg, wParam, lParam);
@@ -160,6 +173,12 @@ LRESULT BaseWindow::HandleMessage(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lP
 void BaseWindow::AddWindow(BaseWindow* window)
 {
     childWindow.push_back(window);
+}
+
+void BaseWindow::AddActionPaint(void* param, void(*action)(BaseWindow* window, PAINTSTRUCT ps, HDC hdc, void* param))
+{
+    actionPaint.param = param;
+    actionPaint.action = action;
 }
 
 void BaseWindow::SetBackgroundColor(HBRUSH brush)

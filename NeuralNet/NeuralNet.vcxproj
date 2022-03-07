@@ -54,7 +54,7 @@
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
-      <AdditionalDependencies>UxTheme.lib;ComCtl32.lib;opengl32.lib;cudart_static.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3dcompiler.lib;d3d11.lib;UxTheme.lib;ComCtl32.lib;opengl32.lib;cudart_static.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <CudaCompile>
       <TargetMachinePlatform>64</TargetMachinePlatform>
@@ -74,7 +74,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <SubSystem>Console</SubSystem>
-      <AdditionalDependencies>UxTheme.lib;ComCtl32.lib;opengl32.lib;cudart_static.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3dcompiler.lib;d3d11.lib;UxTheme.lib;ComCtl32.lib;opengl32.lib;cudart_static.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <CudaCompile>
       <TargetMachinePlatform>64</TargetMachinePlatform>
@@ -87,8 +87,14 @@
     <CudaCompile Include="NeuralNet\Tset.cu" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="WindowsClasses\DirectX3D\VertexBuffer.h" />
+    <ClInclude Include="WindowsClasses\DirectX3D\Shaders\RegisterShaders.h" />
+    <ClInclude Include="WindowsClasses\DirectX3D\Shaders\Shader.h" />
+    <ClInclude Include="WindowsClasses\DirectX3D\Graphics.h" />
+    <ClInclude Include="WindowsClasses\ImageControls\ImageControlGDI.h" />
     <ClInclude Include="WindowsClasses\Brush.h" />
     <ClInclude Include="WindowsClasses\IHandleNotifyStatic.h" />
+    <ClInclude Include="WindowsClasses\ImageControls\IImageControl.h" />
     <ClInclude Include="WindowsClasses\Lable.h" />
     <ClInclude Include="WindowsClasses\Commanded.h" />
     <ClInclude Include="WindowsClasses\IHandleNotify.h" />
@@ -112,6 +118,11 @@
     <ClInclude Include="TextureMemory.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="WindowsClasses\DirectX3D\VertexBuffer.cpp" />
+    <ClCompile Include="WindowsClasses\DirectX3D\Shaders\RegisterShaders.cpp" />
+    <ClCompile Include="WindowsClasses\DirectX3D\Shaders\Shader.cpp" />
+    <ClCompile Include="WindowsClasses\DirectX3D\Graphics.cpp" />
+    <ClCompile Include="WindowsClasses\ImageControls\ImageControlGDI.cpp" />
     <ClCompile Include="WindowsClasses\Brush.cpp" />
     <ClCompile Include="WindowsClasses\Lable.cpp" />
     <ClCompile Include="WindowsClasses\Commanded.cpp" />
@@ -127,6 +138,20 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="WindowsClasses\DirectX3D\Shaders\ShaderPixelDefault.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="WindowsClasses\DirectX3D\Shaders\ShaderVertexDefault.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+    </FxCompile>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

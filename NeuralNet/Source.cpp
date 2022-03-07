@@ -10,8 +10,32 @@ processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 #include "WindowsClasses/Buttons/Button.h"
 #include "WindowsClasses/Lable.h"
 #include "WindowsClasses/Brush.h"
+#include "WindowsClasses/ImageControls/ImageControlGDI.h"
+
+#include "WindowsClasses/DirectX3D/Graphics.h"
+#include "WindowsClasses/DirectX3D/Shaders/Shader.h"
+
+#include "WindowsClasses/DirectX3D/VertexBuffer.h"
+
 #include "Source.h"
 #include "PathManager.h"
+
+#include <SOIL.h>
+
+#define MAX_SIZE 2000
+
+struct Vertex
+{
+	FLOAT x, y, z;
+	FLOAT color[4];
+};
+
+Vertex vertices[] =
+{
+	{0.0f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f},
+	{0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f},
+	{-0.5f, -0.5f, 0.0f,  0.0f, 0.0f, 1.0f}
+};
 
 Brush brushBackground = Brush(RGB(26, 32, 48));
 Brush brushWhite = Brush(RGB(255, 255, 255));
@@ -36,6 +60,10 @@ void main()
 	int sizeButtonX = 50;
 	int sizeButtonY = 30;
 
+	wchar_t path[MAX_SIZE];
+	wchar_t pathFile[MAX_SIZE];
+	PathManager::getFolderWithExe(path);
+
 	font = CreateFont(
 		15, 0, 0, 0, FW_REGULAR, 0, 0, 0, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS,
 		CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH, L"Segoe UI");
@@ -46,6 +74,18 @@ void main()
 	PanelContext* context = new PanelContext(L"Context", brushIdentity.GetBrush(), windowMain);
 	context->Create(8, 8, 250, 250);
 	context->Show(1);
+
+	//Создания класса для графики
+	Graphics graphics = Graphics(context);
+
+
+	D3D11_INPUT_ELEMENT_DESC ied[] =
+	{
+		{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"COLOR",	 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0},
+	};
+	Shader shader = Shader(L"WindowsClasses\\DirectX3D\\Shaders\\ShaderVertexDefault.hlsl", L"WindowsClasses\\DirectX3D\\Shaders\\ShaderPixelDefault.hlsl", ied, 2, &graphics);
+	VertexBuffer vertexBuffer = VertexBuffer(&graphics, vertices, sizeof(Vertex) * 3, sizeof(Vertex));
 
 	PanelContext* textPanel = new PanelContext(L"Context1", brushIdentity.GetBrush(), windowMain);
 	textPanel->Create(8 + 300 + 8, 8, 250, 250);
@@ -64,7 +104,7 @@ void main()
 	//lable->Create(115, 275, 100, 20);
 	//lable->Show(1);
 
-	Button* button = new Button(L"Choose image", brushIdentity.GetBrush(), brushHot.GetBrush(), brushSelected.GetBrush(), windowMain);
+	Button* button = new Button(L"Выберите файл", brushIdentity.GetBrush(), brushHot.GetBrush(), brushSelected.GetBrush(), windowMain);
 	button->Create(8, 275, 100, 20);
 	button->SetFont(font, RGB(255, 255, 255));
 	void* actionData[] = {openDialog, button};
@@ -105,38 +145,17 @@ void main()
 			}
 		});
 	button->Show(1);
-
-
-	//TCHAR buttonText[256] = L"\0";
-
-	//Button*** button = new Button**[countX];
-	//for (int x = 0; x < countX; x++)
-	//{
-	//	button[x] = new Button*[countY];
-	//	for (int y = 0; y < countY; y++)
-	//	{
-	//		TCHAR ch = L'1' + x;
-	//		buttonText[0] = ch;
-	//		buttonText[1] = L'\0';
-	//		button[x][y] = new Button(buttonText, brushIdentity, brushHot, brushSelected, &windowMain);
-	//		button[x][y]->Create(x * sizeButtonX, y * sizeButtonY, sizeButtonX, sizeButtonY);
-	//		button[x][y]->SetFont(font, RGB(255, 255, 255));
-
-	//		button[x][y]->AddAction((void*)ch, [](HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam, void* param)
-	//			{
-	//				std::cout << (char)param << std::endl;
-	//			});
-	//		button[x][y]->Show(1);
-	//	}
-	//}
-
 	windowMain->Show(1);
 
-
+	FLOAT backgroundColor[4] = { 45 / 255.0f, 49 / 255.0f, 71 / 255.0f, 1 };
 	MSG msg = {};
 	while (GetMessage(&msg, 0, 0, 0))
 	{
 		TranslateMessage(&msg);
 		DispatchMessage(&msg);
+
+		graphics.Clear(backgroundColor);
+		graphics.Draw(&shader, &vertexBuffer);
+		graphics.Display();
 	}
 }
