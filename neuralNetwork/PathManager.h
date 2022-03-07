@@ -18,7 +18,7 @@ public:
 	*
 	* sizePath - размер строчки
 	*/
-	DECL static void cutLastName(char* path, int count, int sizePath = -1)
+	static void cutLastName(char* path, int count, int sizePath = -1)
 	{
 		if (sizePath == -1) sizePath = strlen(path);
 		char* endSlash = path;
@@ -32,7 +32,7 @@ public:
 		}
 	}
 
-	DECL static void cutLastName(wchar_t* path, int count, int sizePath = -1)
+	static void cutLastName(wchar_t* path, int count, int sizePath = -1)
 	{
 		if (sizePath == -1) sizePath = lstrlenW(path);
 		wchar_t* endSlash = path;
@@ -60,13 +60,13 @@ public:
 	*
 	* sizePath - размер строчки
 	*/
-	DECL static void addNameInstance(char* path, int count, const char* ins, int sizePath = -1)
+	static void addNameInstance(char* path, int count, const char* ins, int sizePath = -1)
 	{
 		cutLastName(path, count, sizePath);
-		strcat(path, ins);
+		strcat_s(path, strlen(path), ins); ///////////////////////////////////////////////////////////////////////////////////////////////////////
 	}
 
-	DECL static void addNameInstance(wchar_t* path, int count, const wchar_t* ins, int sizePath = -1)
+	static void addNameInstance(wchar_t* path, int count, const wchar_t* ins, int sizePath = -1)
 	{
 		cutLastName(path, count, sizePath);
 		lstrcatW(path, ins);
@@ -87,15 +87,15 @@ public:
 	*
 	* sizePath - размер строчки
 	*/
-	DECL static char* addNameInstance(char* path, char* outPath, int count, const char* ins, int sizePath = -1)
+	static char* addNameInstance(char* path, char* outPath, int count, const char* ins, int sizePath = -1)
 	{
-		strcpy(outPath, path);
+		strcpy_s(outPath, strlen(outPath), path);
 		cutLastName(outPath, count, sizePath);
-		strcat(outPath, ins);
+		strcat_s(outPath, strlen(outPath), ins);
 		return outPath;
 	}
 
-	DECL static wchar_t* addNameInstance(wchar_t* path, wchar_t* outPath, int count, const wchar_t* ins, int sizePath = -1)
+	static wchar_t* addNameInstance(wchar_t* path, wchar_t* outPath, int count, const wchar_t* ins, int sizePath = -1)
 	{
 		lstrcpyW(outPath, path);
 		cutLastName(outPath, count, sizePath);
@@ -103,19 +103,19 @@ public:
 		return outPath;
 	}
 
-	DECL static void getFolderWithExe(char* path)
+	static void getFolderWithExe(char* path)
 	{
 		DWORD sizePath = GetModuleFileNameA(NULL, path, 2000);
 		cutLastName(path, 1, sizePath);
 	}
 
-	DECL static void getFolderWithExe(wchar_t* path)
+	static void getFolderWithExe(wchar_t* path)
 	{
 		DWORD sizePath = GetModuleFileNameW(NULL, path, 2000);
 		cutLastName(path, 1, sizePath);
 	}
 
-	DECL static char** getFolderNames(char* path, int* countNames)
+	static char** getFolderNames(char* path, int* countNames)
 	{
 		int size = strlen(path);
 
@@ -150,7 +150,7 @@ public:
 		return names;
 	}
 
-	DECL static wchar_t** getFolderNames(wchar_t* path, int* countNames)
+	static wchar_t** getFolderNames(wchar_t* path, int* countNames)
 	{
 		int size = lstrlenW(path);
 
@@ -185,7 +185,7 @@ public:
 		return names;
 	}
 
-	DECL static void IntToString(int num, char* string)
+	static void IntToString(int num, char* string)
 	{
 	    int size = num == 0 ? 1 : log10f(num) + 1;
 	    for (int x = size - 1; x >= 0; x--)
@@ -196,7 +196,7 @@ public:
 	    string[size] = '\0';
 	}
 
-	DECL static void IntToString(int num, wchar_t* string)
+	static void IntToString(int num, wchar_t* string)
 	{
 		int size = num == 0 ? 1 : log10f(num) + 1;
 		for (int x = size - 1; x >= 0; x--)

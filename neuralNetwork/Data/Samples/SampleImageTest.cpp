@@ -1,3 +1,4 @@
+#include "pch.h"
 #include "SampleImageTest.h"
 
 SampleImageTest::SampleImageTest()

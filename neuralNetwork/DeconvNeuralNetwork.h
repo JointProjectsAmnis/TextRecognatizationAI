@@ -1,6 +1,7 @@
 #pragma once
 #include "Decl.h"
 #include "NetMatrix.h"
+//#include "Data/SampleData.h"
 #include <iostream>
 
 class DeconvNeuralNetwork
@@ -36,11 +37,15 @@ public:
 	int2 intputMatricesSize; //
 	int* matricesCount; //
 	NetMatrix*** matrices;
+	NetMatrix*** errorMatrices;
 
 	DECL DeconvNeuralNetwork(DevconvNeuralNetDesc netDesc);
 	DECL void forwardPropagation(void* input, const int inputDataSize);
-	//DECL void backPropagation(void* output, );
+	DECL void calculateErrors(double** output);
+	DECL void backPropagation(void* output, const int outputDataSize);
 	DECL void setAllWeightsRandom(int seed, int leftEdge, int rightEdge, int accuracy);
+	DECL void getParentMatrix(int childLayer, int childMatrixID, int* parentLayer, int* parentMatrixID);
+	DECL NetMatrix* getParentMatrix(int childLayer, int childMatrixID);
 	DECL ~DeconvNeuralNetwork();
 private:
 	int defaultKernelSize;

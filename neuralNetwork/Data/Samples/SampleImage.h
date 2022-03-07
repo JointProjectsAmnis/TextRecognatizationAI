@@ -1,4 +1,5 @@
 #pragma once
+#include "../../Decl.h"
 #include "ISample.h"
 #include "../Image.h"
 #include "../ImageData.h"
@@ -8,16 +9,16 @@ public:
 	Image* imageInput = nullptr;
 	Image* imageOutput = nullptr;
 
-	SampleImage();
-	SampleImage(Image* imageInput, Image* imageOutput);
-	~SampleImage();
+	DECL SampleImage();
+	DECL SampleImage(Image* imageInput, Image* imageOutput);
+	DECL ~SampleImage();
 
-	virtual void realese() override;
+	DECL virtual void realese() override;
 
-	virtual double* getInputData(int id) override;
-	virtual double* getOutputData(int id) override;
+	DECL virtual double* getInputData(int id) override;
+	DECL virtual double* getOutputData(int id) override;
 
-	static SampleImage** createSamples(ImageData* inputData, ImageData* outputData);
+	DECL static SampleImage** createSamples(ImageData* inputData, ImageData* outputData);
 	//static SampleData* createSampleData(char* pathInput, char* pathOutput);
 
 };

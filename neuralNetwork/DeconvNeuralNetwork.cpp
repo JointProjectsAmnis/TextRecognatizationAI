@@ -122,6 +122,24 @@ DeconvNeuralNetwork::DeconvNeuralNetwork(DevconvNeuralNetDesc netDesc)
 		}
 	}
 	else throw;
+
+
+
+
+	errorMatrices = new NetMatrix * *[layersCount];
+
+	for (int l = 0; l < layersCount; l++)
+		errorMatrices[l] = new NetMatrix * [matricesCount[l]];
+
+	for (int l = 0; l < layersCount; l++)
+	{
+		int matrixSizeX = matrices[l][0]->matrixSizeX;
+		int matrixSizeY = matrices[l][0]->matrixSizeY;
+
+		for (int m = 0; m < matricesCount[l]; m++)
+			errorMatrices[l][m] = new NetMatrix(matrixSizeX, matrixSizeY);
+	}
+
 }
 
 void DeconvNeuralNetwork::forwardPropagation(void* input, const int inputDataSize)
@@ -152,11 +170,60 @@ void DeconvNeuralNetwork::forwardPropagation(void* input, const int inputDataSiz
 		}
 }
 
+void DeconvNeuralNetwork::calculateErrors(double** output)
+{
+	
+	for(int l = layersCount - 1; l >= 0; l--)
+		for (int m = 0; m < matricesCount[l]; m++)
+		{
+			for(int y = 0; y < errorMatrices[l][m]->matrixSizeY; y++)
+				for (int x = 0; x < errorMatrices[l][m]->matrixSizeX; x++)
+				{
+					if (l == layersCount - 1)
+					{
+						errorMatrices[l][m]->matrix[x][y] = 2 * (matrices[l][m]->matrix[x][y] - output[x][y]) * matrices[l][m]->matrix[x][y] * (1 - 
+							matrices[l][m]->matrix[x][y]);
+					}
+					else
+					{
+						//for (int mPrev = 0; mPrev < matricesCount[l + 1]; mPrev++)
+						//{
+						//	errorMatrices[l][m]->matrix[x][y] = 
+						//}
+					}
+				}
+
+		}
+}
+
+void DeconvNeuralNetwork::backPropagation(void* output, const int outputDataSize)
+{
+
+}
+
 void DeconvNeuralNetwork::setAllWeightsRandom(int seed, int leftEdge, int rightEdge, int accuracy)
 {
 	for(int l = 0; l < layersCount; l++)
 		for (int m = 0; m < matricesCount[l]; m++)
 			matrices[l][m]->setRandomWeights(seed, leftEdge, rightEdge, accuracy);
+}
+
+void DeconvNeuralNetwork::getParentMatrix(int childLayer, int childMatrixID, int* parentLayer, int* parentMatrixID)
+{
+	*parentLayer = childLayer + 1;
+	*parentMatrixID = -1;
+	if (unpoolingLayers[*parentLayer] <= 0)
+		*parentMatrixID = childMatrixID / branching[*parentLayer];
+	else
+		*parentMatrixID = childMatrixID;
+}
+
+NetMatrix* DeconvNeuralNetwork::getParentMatrix(int childLayer, int childMatrixID)
+{
+	int parentLayer = 0;
+	int parentMatrixID = 0;
+	getParentMatrix(childLayer, childMatrixID, &parentLayer, &parentMatrixID);
+	return matrices[parentLayer][parentMatrixID];
 }
 
 DeconvNeuralNetwork::~DeconvNeuralNetwork()

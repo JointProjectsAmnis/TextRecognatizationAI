@@ -55,9 +55,9 @@ int ImageData::saveImages(char* path, const char* prename)
 		name[1] = '\0';
 		for (int x = 0; x < countImages; x++)
 		{
-			strcat(name, prename);
+			strcat_s(name, strlen(name), prename);
 			PathManager::IntToString(x, name + sizePrename + 1);
-			strcat(name, ".bmp");
+			strcat_s(name, strlen(name), ".bmp");
 			PathManager::addNameInstance(path, 1, name);
 			image[x]->saveImage(path);
 		}

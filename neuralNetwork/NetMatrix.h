@@ -3,7 +3,7 @@
 #include <math.h>
 #include <wincrypt.h>
 #include <stdlib.h>
-#define e 2.7182818284
+#define eiler 2.7182818284
 
 class NetMatrix
 {

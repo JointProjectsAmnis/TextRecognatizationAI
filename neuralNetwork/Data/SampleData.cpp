@@ -1,3 +1,4 @@
+#include "pch.h"
 #include "SampleData.h"
 
 SampleData::SampleData()

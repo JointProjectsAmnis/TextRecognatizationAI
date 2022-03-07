@@ -55,7 +55,7 @@ void NetMatrix::clear(double value)
 
 double NetMatrix::sigmoid(double x)
 {
-	return 1 / (1 + pow(e, -x));
+	return 1 / (1 + pow(eiler, -x));
 }
 
 void NetMatrix::setRandomWeights(int seed, int module, double devider, double offset)

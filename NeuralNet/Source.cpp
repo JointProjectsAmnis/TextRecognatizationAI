@@ -9,6 +9,7 @@
 #include "Data/Samples/SampleImage.h"
 #include "NeuralNet/NeuralNetDebug.cuh"
 #include "DeconvNeuralNetwork.h"
+#include "Data/SampleData.h"
 
 INeuralNet* getNeuralNet(int sizeX, int sizeY, int channel)
 {
@@ -25,35 +26,21 @@ void main()
 	netDesc.defaultKernelOrigin = { 1, 1 };
 	netDesc.defaultKernelSize = 3;
 	netDesc.inputMatricesCount = 6;
-	netDesc.intputMatricesSize = {140, 70};
+	netDesc.intputMatricesSize = {3, 3};
 	netDesc.layersCount = 5;
 	netDesc.unpoolingLayers = new int[] {0, 1, 0, 1, 0};
 	DeconvNeuralNetwork neuralNetwork = DeconvNeuralNetwork(netDesc);
 	neuralNetwork.setAllWeightsRandom(77, -1, 1, 1000);
 
-	//for (int m = 0; m < neuralNetwork.matricesCount[0]; m++)
-	//{
-	//	neuralNetwork.matrices[0][m]->kernel[0][0] = 1;
-	//	neuralNetwork.matrices[0][m]->kernel[1][0] = 2;
-	//	neuralNetwork.matrices[0][m]->kernel[2][0] = 3;
-
-	//	neuralNetwork.matrices[0][m]->kernel[0][1] = 0;
-	//	neuralNetwork.matrices[0][m]->kernel[1][1] = 2;
-	//	neuralNetwork.matrices[0][m]->kernel[2][1] = 1;
-
-	//	neuralNetwork.matrices[0][m]->kernel[0][2] = 1;
-	//	neuralNetwork.matrices[0][m]->kernel[1][2] = 0;
-	//	neuralNetwork.matrices[0][m]->kernel[2][2] = 1;
-	//}
+	neuralNetwork.getParentMatrix(3, 2);
 
 
-	int inputElementsCount = netDesc.inputMatricesCount * netDesc.intputMatricesSize.x * netDesc.intputMatricesSize.y;
-	//double* inputData = new double[inputElementsCount] {0, 0.1, 0.2, 0.3, 0.3, 0.2, 0.1, 0};
-	double* inputData = new double[inputElementsCount];
-	for (int i = 0; i < inputElementsCount; i++)
-		inputData[i] = ((rand() % 1000) / (double)1000) * 2;
+	//int inputElementsCount = netDesc.inputMatricesCount * netDesc.intputMatricesSize.x * netDesc.intputMatricesSize.y;
+	//double* inputData = new double[inputElementsCount];
+	//for (int i = 0; i < inputElementsCount; i++)
+	//	inputData[i] = ((rand() % 1000) / (double)1000) * 2;
 
-	neuralNetwork.forwardPropagation(inputData, inputElementsCount * sizeof(double));
+	//neuralNetwork.forwardPropagation(inputData, inputElementsCount * sizeof(double));
 
 	//for (int l = 0; l < neuralNetwork.layersCount; l++)
 	//{
