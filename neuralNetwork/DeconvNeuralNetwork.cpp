@@ -172,7 +172,6 @@ void DeconvNeuralNetwork::forwardPropagation(void* input, const int inputDataSiz
 
 void DeconvNeuralNetwork::calculateErrors(double** output)
 {
-	
 	for(int l = layersCount - 1; l >= 0; l--)
 		for (int m = 0; m < matricesCount[l]; m++)
 		{
@@ -186,18 +185,78 @@ void DeconvNeuralNetwork::calculateErrors(double** output)
 					}
 					else
 					{
-						//for (int mPrev = 0; mPrev < matricesCount[l + 1]; mPrev++)
-						//{
-						//	errorMatrices[l][m]->matrix[x][y] = 
-						//}
+						if (unpoolingLayers[l + 1] <= 0) // In this case may be an error
+						{
+							NetMatrix* parentErrorMatrix = getParentErrorMatrix(l, m);
+							int kernelOriginX = x;
+							int kernelOriginY = y;
+							int kernelLeftUpX = x - matrices[l][m]->kernelSize;
+							int kernelLeftUpY = y - matrices[l][m]->kernelSize;
+
+							errorMatrices[l][m]->matrix[x][y] = 0;
+							for(int posX = kernelLeftUpX; posX < kernelLeftUpX + matrices[l][m]->kernelSize; posX++)
+								for (int posY = kernelLeftUpY; posY < kernelLeftUpY + matrices[l][m]->kernelSize; posY++)
+								{
+									if(posX >= 0 && posX < matrices[l][m]->matrixSizeX)
+										if (posY >= 0 && posY < matrices[l][m]->matrixSizeY)
+										{
+											int posXInKernel = posX - kernelLeftUpX;
+											int posYInKernel = posY - kernelLeftUpY;
+											errorMatrices[l][m]->matrix[x][y] += parentErrorMatrix->matrix[posX][posY] * matrices[l][m]->kernel[posXInKernel][posYInKernel] * matrices[l][m]->matrix[x][y] * (1 - matrices[l][m]->matrix[x][y]);
+										}
+								}
+
+
+
+							//for(int xk = kernelLeftUpX; xk < matrices[l][m]->kernelSize; xk++)
+							//	for (int yk = kernelLeftUpY; yk < matrices[l][m]->kernelSize; yk++)
+							//	{
+							//		if (xk >= 0 && xk < yk >= 0)
+							//		{
+							//			int posXInKernel = xk - kernelLeftUpX;
+							//			int posYInKernel = yk - kernelLeftUpY;
+							//			errorMatrices[l][m]->matrix[x][y] += parentErrorMatrix->matrix[xk][yk] * matrices[l][m]->kernel[posXInKernel][posYInKernel] * matrices[l][m]->matrix[x][y] * (1 - matrices[l][m]->matrix[x][y]);
+							//		}
+							//	}
+						}
+						else
+						{
+							NetMatrix* parentErrorMatrix = getParentErrorMatrix(l, m);
+							int unpoolLeftUpCornerX = x * unpoolingSize[l + 1].x; // Here may be and error
+							int unpoolLeftUpCornerY = y * unpoolingSize[l + 1].y; // Here may be and error
+
+							for(int unpoolX = unpoolLeftUpCornerX; unpoolX < unpoolingSize[l + 1].x; unpoolX++)
+								for (int unpoolY = unpoolLeftUpCornerY; unpoolY < unpoolingSize[l + 1].y; unpoolY++)
+								{
+									errorMatrices[l][m]->matrix[x][y] = parentErrorMatrix->matrix[unpoolX][unpoolY] * 1 * matrices[l][m]->matrix[x][y] * (1 - matrices[l][m]->matrix[x][y]); // Here may be an error
+								}
+						}
 					}
 				}
-
 		}
 }
 
-void DeconvNeuralNetwork::backPropagation(void* output, const int outputDataSize)
+void DeconvNeuralNetwork::correctWeights()
 {
+	for(int l = 0; l < layersCount - 1; l++)
+		if(unpoolingLayers[l + 1] > 0)
+			for (int m = 0; m < matricesCount[l]; m++)
+			{
+				double deltaWeight = 0;
+				for(int kx = 0; kx < matrices[l][m]->kernelSize; kx++)
+					for (int ky = 0; ky < matrices[l][m]->kernelSize; ky++)
+					{
+
+					}
+
+			}
+}
+
+void DeconvNeuralNetwork::backPropagation(double** output, const int outputDataSize)
+{
+	int lastMatrixSize = matrices[layersCount - 1][0]->matrixSizeX * matrices[layersCount - 1][0]->matrixSizeY * sizeof(double);
+	if (lastMatrixSize != outputDataSize) throw;
+	calculateErrors(output);
 
 }
 
@@ -224,6 +283,14 @@ NetMatrix* DeconvNeuralNetwork::getParentMatrix(int childLayer, int childMatrixI
 	int parentMatrixID = 0;
 	getParentMatrix(childLayer, childMatrixID, &parentLayer, &parentMatrixID);
 	return matrices[parentLayer][parentMatrixID];
+}
+
+NetMatrix* DeconvNeuralNetwork::getParentErrorMatrix(int childLayer, int childMatrixID)
+{
+	int parentLayer = 0;
+	int parentMatrixID = 0;
+	getParentMatrix(childLayer, childMatrixID, &parentLayer, &parentMatrixID);
+	return errorMatrices[parentLayer][parentMatrixID];
 }
 
 DeconvNeuralNetwork::~DeconvNeuralNetwork()

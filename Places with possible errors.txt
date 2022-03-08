@@ -15,3 +15,16 @@
 4) DeconvNeuralNetwork::forwardPropagation HERE MAY BE AN ERROR
 	1. x(input)
 	2. x(inputDataSize)
+
+5) DeconvNeuralNetwork::getParentErrorMatrix
+	1. This function is not tested
+
+
+6) DeconvNeuralNetwork::calculateErrors
+	1. kernelStride is not taken into accaunt
+
+
+Some places with possible errors:
+	kernelStride is not customized
+	NetMatrix.oldDeltaKrenel
+

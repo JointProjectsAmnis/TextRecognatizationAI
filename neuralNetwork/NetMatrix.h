@@ -18,6 +18,7 @@ public:
 
 	double** matrix;
 	double** kernel;
+	double** oldDeltaKernel;
 
 	DECL NetMatrix(int matrixSizeX, int matrixSizeY, int kernelSize = -1, int kernelStride = -1, int kernelOriginX = -1, int kernelOriginY = -1);
 	DECL ~NetMatrix();

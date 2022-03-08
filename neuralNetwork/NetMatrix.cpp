@@ -23,11 +23,16 @@ NetMatrix::NetMatrix(int matrixSizeX, int matrixSizeY, int kernelSize, int kerne
 	if (kernelSize > 0 && kernelOriginX > 0 && kernelOriginY > 0 && kernelStride > 0)
 	{
 		kernel = new double* [this->kernelSize];
+		oldDeltaKernel = new double*[this->kernelSize];
 		for (int i = 0; i < this->kernelSize; i++)
 		{
 			kernel[i] = new double[this->kernelSize];
+			oldDeltaKernel[i] = new double[this->kernelSize];
 			for (int j = 0; j < this->kernelSize; j++)
+			{
 				kernel[i][j] = 0;
+				oldDeltaKernel[i][j] = 0;
+			}
 		}
 	}
 	else
