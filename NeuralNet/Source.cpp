@@ -14,11 +14,17 @@ processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 
 #include "WindowsClasses/DirectX3D/Graphics.h"
 #include "WindowsClasses/DirectX3D/Shaders/Shader.h"
+#include "WindowsClasses/DirectX3D/Shaders/RegisterShaders.h"
 
 #include "WindowsClasses/DirectX3D/VertexBuffer.h"
+#include "WindowsClasses/DirectX3D/ConstantBuffer.h"
+#include "WindowsClasses/DirectX3D/Texture.h"
+#include "WindowsClasses/DirectX3D/Sampler.h"
 
 #include "Source.h"
 #include "PathManager.h"
+
+#include <string>
 
 #include <SOIL.h>
 
@@ -30,11 +36,26 @@ struct Vertex
 	FLOAT color[4];
 };
 
+Vertex verticesColor[] =
+{
+	{-1.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f},
+	{ 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f},
+	{ 1.0f,-1.0f, 0.0f, 0.0f, 0.0f, 1.0f},
+
+	{ 1.0f,-1.0f, 0.0f, 0.0f, 0.0f, 1.0f},
+	{-1.0f,-1.0f, 0.0f, 0.0f, 1.0f, 0.0f},
+	{-1.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f},
+};
+
 Vertex vertices[] =
 {
-	{0.0f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f},
-	{0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f},
-	{-0.5f, -0.5f, 0.0f,  0.0f, 0.0f, 1.0f}
+	{-1.0f, 1.0f, 0.0f},
+	{ 1.0f, 1.0f, 0.0f},
+	{ 1.0f,-1.0f, 0.0f},
+
+	{ 1.0f,-1.0f, 0.0f},
+	{-1.0f,-1.0f, 0.0f},
+	{-1.0f, 1.0f, 0.0f},
 };
 
 Brush brushBackground = Brush(RGB(26, 32, 48));
@@ -52,6 +73,7 @@ HFONT font;
 
 void main()
 {
+	setlocale(LC_ALL, "ru");
 	CoInitializeEx(NULL, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);
 
 	int countX = 10;
@@ -75,18 +97,6 @@ void main()
 	context->Create(8, 8, 250, 250);
 	context->Show(1);
 
-	//Создания класса для графики
-	Graphics graphics = Graphics(context);
-
-
-	D3D11_INPUT_ELEMENT_DESC ied[] =
-	{
-		{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{"COLOR",	 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0},
-	};
-	Shader shader = Shader(L"WindowsClasses\\DirectX3D\\Shaders\\ShaderVertexDefault.hlsl", L"WindowsClasses\\DirectX3D\\Shaders\\ShaderPixelDefault.hlsl", ied, 2, &graphics);
-	VertexBuffer vertexBuffer = VertexBuffer(&graphics, vertices, sizeof(Vertex) * 3, sizeof(Vertex));
-
 	PanelContext* textPanel = new PanelContext(L"Context1", brushIdentity.GetBrush(), windowMain);
 	textPanel->Create(8 + 300 + 8, 8, 250, 250);
 	textPanel->Show(1);
@@ -104,14 +114,26 @@ void main()
 	//lable->Create(115, 275, 100, 20);
 	//lable->Show(1);
 
+		//Создания класса для графики
+	Graphics graphics = Graphics(context);
+	RegisterShaders registerShaders = RegisterShaders(&graphics);
+	VertexBuffer vertexBuffer = VertexBuffer(&graphics, vertices, sizeof(Vertex) * 6, sizeof(Vertex));
+
+	int width, height, channels;
+	unsigned char* image = SOIL_load_image("E:\\Кодинг\\Изображения для обучения сети\\2.png", &width, &height, &channels, 0);
+
+	Texture texture = Texture(&graphics, width, height, channels, image);
+	Sampler sampler = Sampler(&graphics);
+
 	Button* button = new Button(L"Выберите файл", brushIdentity.GetBrush(), brushHot.GetBrush(), brushSelected.GetBrush(), windowMain);
 	button->Create(8, 275, 100, 20);
 	button->SetFont(font, RGB(255, 255, 255));
-	void* actionData[] = {openDialog, button};
+	void* actionData[] = {openDialog, button, &texture};
 	button->AddAction(actionData, [](HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam, void* param)
 		{
 			IFileOpenDialog* openDialog = (IFileOpenDialog*)(*(void**)param);
 			Button* button = (Button*)(*((void**)param + 1));
+			Texture* texture = (Texture*)(*((void**)param + 2));
 			openDialog->Show(NULL);
 
 			IShellItem* item = nullptr;
@@ -119,8 +141,22 @@ void main()
 
 			if (item)
 			{
+
 				LPWSTR text, textMaxSize;
 				item->GetDisplayName(SIGDN_FILESYSPATH, &text);
+
+				int lengthText = lstrlenW(text);
+				char* path = new char[lengthText + 1];
+				path[lengthText] = '\0';
+
+				wcstombs(path, text, lengthText * sizeof(wchar_t));
+
+				int width, height, channels;
+				unsigned char* image = SOIL_load_image(path, &width, &height, &channels, 4);
+				texture->SetTexture(width, height, channels, image);
+
+				free(path);
+				free(image);
 
 				text = PathManager::getLastName(text, 1);
 
@@ -145,17 +181,41 @@ void main()
 			}
 		});
 	button->Show(1);
+
 	windowMain->Show(1);
+
+
+	RECT rect;
+	GetClientRect(context->hwnd, &rect);
+	float sizeCof[4] = { texture.width, texture.height, rect.right, rect.bottom };
+	ConstantBuffer constantBuffer = ConstantBuffer(&graphics, &sizeCof, sizeof(float) * 4);
+
 
 	FLOAT backgroundColor[4] = { 45 / 255.0f, 49 / 255.0f, 71 / 255.0f, 1 };
 	MSG msg = {};
-	while (GetMessage(&msg, 0, 0, 0))
+	while (!windowMain->isClosed)
 	{
-		TranslateMessage(&msg);
-		DispatchMessage(&msg);
+		while (PeekMessage(&msg, 0, 0, 0, PM_REMOVE))
+		{
+			TranslateMessage(&msg);
+			DispatchMessage(&msg);
+		}
 
 		graphics.Clear(backgroundColor);
-		graphics.Draw(&shader, &vertexBuffer);
+		
+
+		//k += 0.0001f;
+		//constantBuffer.ToSetData(&k, sizeof(float));
+
+		//RECT rect;
+		//GetClientRect(context->hwnd, &rect);
+		//float sizeCof[4] = { texture.width, texture.height, rect.right, rect.bottom };
+		//constantBuffer.ToSetData(&sizeCof, sizeof(float) * 4);
+
+		constantBuffer.SetBuffer(0);
+		texture.Bind(0);
+		sampler.Bind(0);
+		graphics.Draw(registerShaders.shaderImage, &vertexBuffer);
 		graphics.Display();
 	}
 }

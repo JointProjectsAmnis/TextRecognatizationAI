@@ -12,6 +12,7 @@ LRESULT Panel::HandleMessage(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     case WM_CLOSE:
     {
         PostQuitMessage(0);
+        isClosed = true;
     }
     break;
     }

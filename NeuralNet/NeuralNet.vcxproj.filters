@@ -36,6 +36,9 @@
     <ClInclude Include="WindowsClasses\DirectX3D\Shaders\Shader.h" />
     <ClInclude Include="WindowsClasses\DirectX3D\Shaders\RegisterShaders.h" />
     <ClInclude Include="WindowsClasses\DirectX3D\VertexBuffer.h" />
+    <ClInclude Include="WindowsClasses\DirectX3D\ConstantBuffer.h" />
+    <ClInclude Include="WindowsClasses\DirectX3D\Texture.h" />
+    <ClInclude Include="WindowsClasses\DirectX3D\Sampler.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Data\Image.cpp" />
@@ -55,12 +58,19 @@
     <ClCompile Include="WindowsClasses\DirectX3D\Shaders\Shader.cpp" />
     <ClCompile Include="WindowsClasses\DirectX3D\Shaders\RegisterShaders.cpp" />
     <ClCompile Include="WindowsClasses\DirectX3D\VertexBuffer.cpp" />
+    <ClCompile Include="WindowsClasses\DirectX3D\ConstantBuffer.cpp" />
+    <ClCompile Include="WindowsClasses\DirectX3D\Texture.cpp" />
+    <ClCompile Include="WindowsClasses\DirectX3D\Sampler.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="WindowsClasses\DirectX3D\Shaders\ShaderVertexDefault.hlsl" />
-    <FxCompile Include="WindowsClasses\DirectX3D\Shaders\ShaderPixelDefault.hlsl" />
+    <FxCompile Include="WindowsClasses\DirectX3D\Shaders\ShaderDefault\ShaderVertexDefault.hlsl" />
+    <FxCompile Include="WindowsClasses\DirectX3D\Shaders\ShaderDefault\ShaderPixelDefault.hlsl" />
+    <FxCompile Include="WindowsClasses\DirectX3D\Shaders\ShaderTriangle\ShaderVertexTriangle.hlsl" />
+    <FxCompile Include="WindowsClasses\DirectX3D\Shaders\ShaderTriangle\ShaderPixelTriangle.hlsl" />
+    <FxCompile Include="WindowsClasses\DirectX3D\Shaders\ShaderImage\ShaderVertexImage.hlsl" />
+    <FxCompile Include="WindowsClasses\DirectX3D\Shaders\ShaderImage\ShaderPixelImage.hlsl" />
   </ItemGroup>
 </Project>

@@ -17,6 +17,8 @@ public:
     HBRUSH backgroundColor;
     bool toCreateNewClass = false;
 
+    bool isClosed = false;
+
     HFONT font = NULL;
     COLORREF colorFont = RGB(0, 0, 0);
 
