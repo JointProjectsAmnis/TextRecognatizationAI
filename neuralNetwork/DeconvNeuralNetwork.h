@@ -23,6 +23,7 @@ public:
 		int2 defaultKernelOrigin;
 		int2* kernelOrigin;
 		int2* unpoolingSize;
+		int2 defaultUnpoolingSize;
 		int2 intputMatricesSize;
 		int inputMatricesCount;
 	};
@@ -35,6 +36,7 @@ public:
 	int2* kernelOrigin;
 	int2* unpoolingSize; //
 	int2 intputMatricesSize; //
+	int2 defaultUnpoolingSize;
 	int* matricesCount; //
 	NetMatrix*** matrices;
 	NetMatrix*** errorMatrices;
@@ -42,8 +44,8 @@ public:
 	DECL DeconvNeuralNetwork(DevconvNeuralNetDesc netDesc);
 	DECL void forwardPropagation(void* input, const int inputDataSize);
 	DECL void calculateErrors(double** output);
-	DECL void correctWeights();
-	DECL void backPropagation(double** output, const int outputDataSize);
+	DECL void correctWeights(double k, double a);
+	DECL void backPropagation(double** output, const int outputDataSize, double k, double a);
 	DECL void setAllWeightsRandom(int seed, int leftEdge, int rightEdge, int accuracy);
 	DECL void getParentMatrix(int childLayer, int childMatrixID, int* parentLayer, int* parentMatrixID);
 	DECL NetMatrix* getParentMatrix(int childLayer, int childMatrixID);

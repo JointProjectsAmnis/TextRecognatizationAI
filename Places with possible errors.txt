@@ -22,6 +22,10 @@
 
 6) DeconvNeuralNetwork::calculateErrors
 	1. kernelStride is not taken into accaunt
+	2. x(Last layer errors)
+	3. x(Hidden layers errors)
+	4. x(Hidden layers unpooling errors)
+
 
 
 Some places with possible errors:

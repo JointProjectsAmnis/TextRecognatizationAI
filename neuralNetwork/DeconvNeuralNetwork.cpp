@@ -70,14 +70,26 @@ DeconvNeuralNetwork::DeconvNeuralNetwork(DevconvNeuralNetDesc netDesc)
 			kernelOrigin[i] = defaultKernelOrigin;
 	}
 
+	defaultUnpoolingSize = netDesc.defaultUnpoolingSize;
+
 	unpoolingSize = new int2[layersCount];
 	if (netDesc.unpoolingSize)
 		memcpy(unpoolingSize, netDesc.unpoolingLayers, layersCount * sizeof(int2));
 	else
 	{
-		std::cout << "unpoolingSize set as default (kernelSize in the layer)" << std::endl;
-		for (int l = 0; l < layersCount; l++)
-			unpoolingSize[l] = int2{kernelSize[l], kernelSize[l]};
+		if (defaultUnpoolingSize.x > 0 && defaultUnpoolingSize.y > 0)
+		{
+			std::cout << "unpoolingSize set as defaultUnpoolingSize" << std::endl;
+			for (int l = 0; l < layersCount; l++)
+				unpoolingSize[l] = defaultUnpoolingSize;
+		}
+		else
+		{
+			std::cout << "unpoolingSize set as default (kernelSize in the layer)" << std::endl;
+			for (int l = 0; l < layersCount; l++)
+				unpoolingSize[l] = int2{ kernelSize[l], kernelSize[l] };
+		}
+
 	}
 
 	if (netDesc.intputMatricesSize.x > 0 && netDesc.intputMatricesSize.y > 0)
@@ -190,34 +202,28 @@ void DeconvNeuralNetwork::calculateErrors(double** output)
 							NetMatrix* parentErrorMatrix = getParentErrorMatrix(l, m);
 							int kernelOriginX = x;
 							int kernelOriginY = y;
-							int kernelLeftUpX = x - matrices[l][m]->kernelSize;
-							int kernelLeftUpY = y - matrices[l][m]->kernelSize;
+							int kernelLeftUpX = x - matrices[l][m]->kernelOriginX;
+							int kernelLeftUpY = y - matrices[l][m]->kernelOriginY;
 
 							errorMatrices[l][m]->matrix[x][y] = 0;
-							for(int posX = kernelLeftUpX; posX < kernelLeftUpX + matrices[l][m]->kernelSize; posX++)
-								for (int posY = kernelLeftUpY; posY < kernelLeftUpY + matrices[l][m]->kernelSize; posY++)
+							for (int posY = kernelLeftUpY; posY < kernelLeftUpY + matrices[l][m]->kernelSize; posY++)
+								for(int posX = kernelLeftUpX; posX < kernelLeftUpX + matrices[l][m]->kernelSize; posX++)
 								{
 									if(posX >= 0 && posX < matrices[l][m]->matrixSizeX)
 										if (posY >= 0 && posY < matrices[l][m]->matrixSizeY)
 										{
 											int posXInKernel = posX - kernelLeftUpX;
 											int posYInKernel = posY - kernelLeftUpY;
-											errorMatrices[l][m]->matrix[x][y] += parentErrorMatrix->matrix[posX][posY] * matrices[l][m]->kernel[posXInKernel][posYInKernel] * matrices[l][m]->matrix[x][y] * (1 - matrices[l][m]->matrix[x][y]);
+											if (unpoolingLayers[l] <= 0)
+											{
+												errorMatrices[l][m]->matrix[x][y] += parentErrorMatrix->matrix[posX][posY] * matrices[l][m]->kernel[posXInKernel][posYInKernel] * matrices[l][m]->matrix[x][y] * (1 - matrices[l][m]->matrix[x][y]);
+											}
+											else
+											{
+												errorMatrices[l][m]->matrix[x][y] += parentErrorMatrix->matrix[posX][posY] * matrices[l][m]->kernel[posXInKernel][posYInKernel];
+											}
 										}
 								}
-
-
-
-							//for(int xk = kernelLeftUpX; xk < matrices[l][m]->kernelSize; xk++)
-							//	for (int yk = kernelLeftUpY; yk < matrices[l][m]->kernelSize; yk++)
-							//	{
-							//		if (xk >= 0 && xk < yk >= 0)
-							//		{
-							//			int posXInKernel = xk - kernelLeftUpX;
-							//			int posYInKernel = yk - kernelLeftUpY;
-							//			errorMatrices[l][m]->matrix[x][y] += parentErrorMatrix->matrix[xk][yk] * matrices[l][m]->kernel[posXInKernel][posYInKernel] * matrices[l][m]->matrix[x][y] * (1 - matrices[l][m]->matrix[x][y]);
-							//		}
-							//	}
 						}
 						else
 						{
@@ -225,10 +231,10 @@ void DeconvNeuralNetwork::calculateErrors(double** output)
 							int unpoolLeftUpCornerX = x * unpoolingSize[l + 1].x; // Here may be and error
 							int unpoolLeftUpCornerY = y * unpoolingSize[l + 1].y; // Here may be and error
 
-							for(int unpoolX = unpoolLeftUpCornerX; unpoolX < unpoolingSize[l + 1].x; unpoolX++)
-								for (int unpoolY = unpoolLeftUpCornerY; unpoolY < unpoolingSize[l + 1].y; unpoolY++)
+							for (int unpoolY = unpoolLeftUpCornerY; unpoolY < unpoolingSize[l + 1].y; unpoolY++)
+								for(int unpoolX = unpoolLeftUpCornerX; unpoolX < unpoolingSize[l + 1].x; unpoolX++)
 								{
-									errorMatrices[l][m]->matrix[x][y] = parentErrorMatrix->matrix[unpoolX][unpoolY] * 1 * matrices[l][m]->matrix[x][y] * (1 - matrices[l][m]->matrix[x][y]); // Here may be an error
+									errorMatrices[l][m]->matrix[x][y] += parentErrorMatrix->matrix[unpoolX][unpoolY] * 1 * matrices[l][m]->matrix[x][y] * (1 - matrices[l][m]->matrix[x][y]); // Here may be an error
 								}
 						}
 					}
@@ -236,28 +242,39 @@ void DeconvNeuralNetwork::calculateErrors(double** output)
 		}
 }
 
-void DeconvNeuralNetwork::correctWeights()
+void DeconvNeuralNetwork::correctWeights(double k, double a)
 {
 	for(int l = 0; l < layersCount - 1; l++)
-		if(unpoolingLayers[l + 1] > 0)
+		if(unpoolingLayers[l + 1] <= 0)
 			for (int m = 0; m < matricesCount[l]; m++)
 			{
-				double deltaWeight = 0;
+				NetMatrix* parentErrorMatrix = getParentErrorMatrix(l, m);
 				for(int kx = 0; kx < matrices[l][m]->kernelSize; kx++)
 					for (int ky = 0; ky < matrices[l][m]->kernelSize; ky++)
 					{
-
+						double weightDiff = 0;
+						for(int y = 0; y < parentErrorMatrix->matrixSizeY; y++)
+							for (int x = 0; x < parentErrorMatrix->matrixSizeX; x++)
+							{
+								int posXInMatrix = x - matrices[l][m]->kernelOriginX + kx;
+								int posYInMatrix = y - matrices[l][m]->kernelOriginY + ky;
+								if(posXInMatrix >= 0 && posXInMatrix < parentErrorMatrix->matrixSizeX)
+									if(posYInMatrix >= 0 && posYInMatrix < parentErrorMatrix->matrixSizeY)
+										weightDiff += parentErrorMatrix->matrix[posXInMatrix][posYInMatrix] * matrices[l][m]->matrix[x][y];
+							}
+						double weightDelta = weightDiff * k + matrices[l][m]->oldDeltaKernel[kx][ky] * a;
+						matrices[l][m]->kernel[kx][ky] -= weightDelta;
+						matrices[l][m]->oldDeltaKernel[kx][ky] = weightDelta;
 					}
-
 			}
 }
 
-void DeconvNeuralNetwork::backPropagation(double** output, const int outputDataSize)
+void DeconvNeuralNetwork::backPropagation(double** output, const int outputDataSize, double k, double a)
 {
 	int lastMatrixSize = matrices[layersCount - 1][0]->matrixSizeX * matrices[layersCount - 1][0]->matrixSizeY * sizeof(double);
 	if (lastMatrixSize != outputDataSize) throw;
 	calculateErrors(output);
-
+	correctWeights(k, a);
 }
 
 void DeconvNeuralNetwork::setAllWeightsRandom(int seed, int leftEdge, int rightEdge, int accuracy)
@@ -290,6 +307,7 @@ NetMatrix* DeconvNeuralNetwork::getParentErrorMatrix(int childLayer, int childMa
 	int parentLayer = 0;
 	int parentMatrixID = 0;
 	getParentMatrix(childLayer, childMatrixID, &parentLayer, &parentMatrixID);
+	double test = errorMatrices[parentLayer][parentMatrixID]->matrix[0][0];
 	return errorMatrices[parentLayer][parentMatrixID];
 }
 
