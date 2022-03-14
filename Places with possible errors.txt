@@ -32,3 +32,11 @@ Some places with possible errors:
 	kernelStride is not customized
 	NetMatrix.oldDeltaKrenel
 
+
+----------------Convolution neural network-------------------------------
+
+1) NetMatrix.pool (Here less possible be error)
+2) NetMatrix.convolute
+
+
+

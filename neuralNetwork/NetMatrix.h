@@ -26,8 +26,11 @@ public:
 	DECL double sigmoid(double x);
 	DECL void setRandomWeights(int seed, int module, double devider, double offset);
 	DECL void setRandomWeights(int seed, int leftEdge, int rightEdge, int accuracy);
+	DECL void fill(double** data);
 
-	DECL NetMatrix pool();
+
+	DECL void pool(NetMatrix* dest, int poolSizeX, int poolSizeY);
+	DECL void convolute(NetMatrix* dest);
 
 	DECL void unpool(NetMatrix* dest, int poolSizeX, int poolSizeY);
 	DECL void deconvolute(NetMatrix* dest);

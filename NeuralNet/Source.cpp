@@ -1,33 +1,43 @@
-#include <iostream>
-#include "Data/ImageData.h"
+//#include <iostream>
+//#include "Data/ImageData.h"
 #include <soil.h>
 #include <windows.h>
 
-#include "PathManager.h"
-#include "Data/ImageData.h"
-#include "Data/SampleData.h"
-#include "Data/Samples/SampleImage.h"
-#include "NeuralNet/NeuralNetDebug.cuh"
+//#include "PathManager.h"
+//#include "Data/ImageData.h"
+//#include "Data/SampleData.h"
+//#include "Data/Samples/SampleImage.h"
+//#include "NeuralNet/NeuralNetDebug.cuh"
+//#include "Data/ImageData.h"
 #include "DeconvNeuralNetwork.h"
-#include "Data/ImageData.h"
+#include "ConvNeuralNetwork.h"
 
 
-INeuralNet* getNeuralNet(int sizeX, int sizeY, int channel)
+//INeuralNet* getNeuralNet(int sizeX, int sizeY, int channel)
+//{
+//	return new NeuralNetDebug(sizeX, sizeY, channel);
+//}
+//
+//struct Sample
+//{
+//	double* inputData;
+//	double** teatherData;
+//};
+
+
+void chToFl(unsigned char* chImage, double*& outFImage, int sizeX, int sizeY, int channel)
 {
-	return new NeuralNetDebug(sizeX, sizeY, channel);
+	if (outFImage == nullptr)
+		outFImage = new double[sizeX * sizeY * channel];
+	for (int x = 0; x < sizeX * sizeY * channel; x++)
+		outFImage[x] = chImage[x] / 255.0f;
 }
 
-struct Sample
-{
-	double* inputData;
-	double** teatherData;
-};
-
-void main()
+void deconv()
 {
 	setlocale(0, "ru");
 
-	DeconvNeuralNetwork::PartialDevconvNeuralNetDesc netDesc{};
+	DeconvNeuralNetwork::DevconvNeuralNetDesc netDesc{};
 	netDesc.branching = new int[] { 1, 0, 2};
 	netDesc.defaultKernelOrigin = { 20, 20 };
 	netDesc.defaultKernelSize = 40;
@@ -44,7 +54,7 @@ void main()
 	unsigned char* byteImage = SOIL_load_image(pathInput, &width, &height, &channels, 1);
 
 	double* image = nullptr;
-	Image::chToFl(byteImage, image, width, height, 1);
+	chToFl(byteImage, image, width, height, 1);
 
 	double** matrix = new double* [width];
 	for (int x = 0; x < width; x++)
@@ -83,4 +93,71 @@ void main()
 			SOIL_save_image(pathOutput, SOIL_SAVE_TYPE_BMP, lastMatrix->matrixSizeX, lastMatrix->matrixSizeY, 1, outputImage);
 		}
 	}
+}
+
+void printNeuralNet(ConvNeuralNetwork& net)
+{
+	for (int l = net.layersCount - 1; l >= 0; l--)
+	{
+		for (int y = 0; y < net.matrices[l][0]->matrixSizeY; y++)
+		{
+			for (int m = 0; m < net.matricesCount[l]; m++)
+			{
+				for (int x = 0; x < net.matrices[l][m]->matrixSizeX; x++)
+					std::cout << net.matrices[l][m]->matrix[x][y] << " ";
+				std::cout << " ";
+			}
+			std::cout << std::endl;
+		}
+		std::cout << std::endl;
+	}
+}
+
+void printMatrix(NetMatrix &matrix)
+{
+	for (int y = 0; y < matrix.matrixSizeY; y++)
+	{
+		for (int x = 0; x < matrix.matrixSizeX; x++)
+		{
+			std::cout << matrix.matrix[x][y] << " ";
+		}
+		std::cout << std::endl;
+	}
+}
+
+void main()
+{
+	double** inputData;
+	ConvNeuralNetwork::ConvNeuralNetDesc netDesc{};
+	netDesc.branching = new int[] { 3, 0, 2, 0, 1 };
+	netDesc.defaultKernelOrigin = { 20, 20 };
+	netDesc.defaultKernelSize = 40;
+	netDesc.defaultPoolingSize = { 2, 2 };
+	ConvNeuralNetwork net({20, 20}, 5, netDesc);
+
+	inputData = new double* [net.matrices[0][0]->matrixSizeX];
+	for (int x = 0; x < net.matrices[0][0]->matrixSizeX; x++)
+	{
+		inputData[x] = new double[net.matrices[0][0]->matrixSizeY];
+		for (int y = 0; y < net.matrices[0][0]->matrixSizeY; y++)
+			inputData[x][y] = 1;
+	}
+
+	net.forwardPropagation(inputData, net.matrices[0][0]->matrixSizeX * net.matrices[0][0]->matrixSizeY * sizeof(double));
+
+	NetMatrix matrix0(2, 2);
+	NetMatrix matrix1(2, 2, 3, 1, 1, 1);
+
+	matrix1.setRandomWeights(256, -1, 1, 1000);
+
+	for(int y = 0; y < 2; y++)
+		for (int x = 0; x < 2; x++)
+		{
+			matrix0.matrix[x][y] = rand() % 10;
+		}
+
+	matrix0.convolute(&matrix1);
+	printMatrix(matrix0);
+	std::cout << std::endl;
+	printMatrix(matrix1);
 }

@@ -169,6 +169,8 @@
     </CudaCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="amnisMath.h" />
+    <ClInclude Include="ConvNeuralNetwork.h" />
     <ClInclude Include="Decl.h" />
     <ClInclude Include="DeconvNeuralNetwork.h" />
     <ClInclude Include="framework.h" />
@@ -176,6 +178,7 @@
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="ConvNeuralNetwork.cpp" />
     <ClCompile Include="DeconvNeuralNetwork.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="NetMatrix.cpp" />

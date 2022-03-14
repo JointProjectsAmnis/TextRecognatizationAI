@@ -3,16 +3,13 @@
 #include "NetMatrix.h"
 #include <iostream>
 
+#include "amnisMath.h"
+
 class DeconvNeuralNetwork
 {
 public:
-	struct int2
-	{
-		int x;
-		int y;
-	};
-	
-	struct PartialDevconvNeuralNetDesc
+
+	struct DevconvNeuralNetDesc
 	{
 		int* branching;
 		int defaultKernelSize;
@@ -38,7 +35,7 @@ public:
 	NetMatrix*** matrices;
 	NetMatrix*** errorMatrices;
 
-	DECL DeconvNeuralNetwork(int2 outputImageSize, int layersCount, PartialDevconvNeuralNetDesc netDesc);
+	DECL DeconvNeuralNetwork(int2 outputImageSize, int layersCount, DevconvNeuralNetDesc netDesc);
 	DECL void forwardPropagation(void* input, const int inputDataSize);
 	DECL void calculateErrors(double** output);
 	DECL void correctWeights(double k, double a);

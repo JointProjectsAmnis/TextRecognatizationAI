@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "DeconvNeuralNetwork.h"
 
-DeconvNeuralNetwork::DeconvNeuralNetwork(int2 outputImageSize, int layersCount, PartialDevconvNeuralNetDesc netDesc)
+DeconvNeuralNetwork::DeconvNeuralNetwork(int2 outputImageSize, int layersCount, DevconvNeuralNetDesc netDesc)
 {
 
 	if (outputImageSize.x <= 0 || outputImageSize.y <= 0) throw;

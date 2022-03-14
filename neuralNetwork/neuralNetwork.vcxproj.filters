@@ -30,6 +30,12 @@
     <ClInclude Include="NetMatrix.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
+    <ClInclude Include="ConvNeuralNetwork.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="amnisMath.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -42,6 +48,9 @@
       <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="NetMatrix.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="ConvNeuralNetwork.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
   </ItemGroup>
