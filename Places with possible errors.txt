@@ -37,6 +37,7 @@ Some places with possible errors:
 
 1) NetMatrix.pool (Here less possible be error)
 2) NetMatrix.convolute
+3) ConvNeuralNetwork.calculateErrors (outputID)
 
 
 

@@ -166,10 +166,156 @@ void ConvNeuralNetwork::forwardPropagation(double** inputData, const int inputDa
 	matrices[0][0]->fill(inputData);
 	for (int l = 1; l < layersCount; l++)
 	{
-		for (int m = 0; m < matricesCount[layersCount]; m++)
+		if (branching[l - 1] > 0)
 		{
-
+			for (int m = 0; m < matricesCount[l]; m++)
+			{
+				NetMatrix* parentMatrix = getParentMatrix(l, m);
+				parentMatrix->convolute(matrices[l][m]);
+			}
+		}
+		else
+		{
+			for (int m = 0; m < matricesCount[l]; m++)
+			{
+				NetMatrix* parentMatrix = getParentMatrix(l, m);
+				parentMatrix->pool(matrices[l][m], poolingSize[l - 1].x, poolingSize[l - 1].y);
+			}
 		}
 	}
+}
 
+void ConvNeuralNetwork::calculateErrors(double* output)
+{
+	for (int m = 0; m < matricesCount[layersCount - 1]; m++)
+	{
+		for (int y = 0; y < errorMatrices[layersCount - 1][m]->matrixSizeY; y++)
+			for (int x = 0; x < errorMatrices[layersCount - 1][m]->matrixSizeX; x++)
+			{
+				NetMatrix* matrix = matrices[layersCount - 1][m];
+				int outputID = x + y * matrix->matrixSizeX + matrix->matrixSizeX * matrix->matrixSizeY * m; // Here may be an error
+				errorMatrices[layersCount - 1][m]->matrix[x][y] = 2 * (matrix->matrix[x][y] - output[outputID]) * matrix->matrix[x][y] * (1 - matrix->matrix[x][y]);
+			}
+	}
+
+	for (int l = layersCount - 2; l >= 0; l--)
+	{
+
+			for (int m0 = 0; m0 < matricesCount[l]; m0++)
+			{	
+				int childMatricesCount = getChildMatricesCount(l, m0);
+
+				int childsLayer = 0;
+				int firstChildMatrixID = 0;
+
+				getChildMatrix(l, m0, 0, &childsLayer, &firstChildMatrixID);
+
+				NetMatrix* childMatrix = getChildMatrix(l, m0, 0);
+
+				for (int y = 0; y < errorMatrices[l][m0]->matrixSizeY; y++)
+					for (int x = 0; x < errorMatrices[l][m0]->matrixSizeX; x++)
+					{
+						errorMatrices[l][m0]->matrix[x][y] = 0;
+						for (int m1 = firstChildMatrixID; m1 < firstChildMatrixID + childMatricesCount; m1++)
+						{
+							int kernelLeftUpInMatrixX = x - errorMatrices[childsLayer][m1]->kernelOriginX;
+							int kernelLeftUpInMatrixY = y - errorMatrices[childsLayer][m1]->kernelOriginY;
+
+							for (int ky = kernelLeftUpInMatrixY; ky < kernelLeftUpInMatrixY + errorMatrices[childsLayer][m1]->kernelSize; ky++)
+								for (int kx = kernelLeftUpInMatrixX; kx < kernelLeftUpInMatrixX + errorMatrices[childsLayer][m1]->kernelSize; kx++)
+								{
+									if (kx >= 0 && kx < errorMatrices[childsLayer][m1]->matrixSizeX)
+										if (ky >= 0 && ky < errorMatrices[childsLayer][m1]->matrixSizeY)
+										{
+												int kernelX = kx - kernelLeftUpInMatrixX;
+												int kernelY = ky - kernelLeftUpInMatrixY;
+
+												int weight = branching[l] > 0 ? matrices[childsLayer][m1]->kernel[kernelX][kernelY] : 1; // Pooling is taken in accaunt
+												int childError = errorMatrices[childsLayer][m1]->matrix[kx][ky];
+												int neuron = matrices[l][m0]->matrix[x][y];
+
+												errorMatrices[l][m0]->matrix[x][y] += childError * weight * neuron * (1 - neuron);
+										}
+								}
+						}
+					}
+			}
+	}
+}
+
+void ConvNeuralNetwork::backPropagation(double** output, const int outputDataSize, double k, double a)
+{
+	
+}
+
+void ConvNeuralNetwork::getParentMatrix(int childLayer, int childMatrixID, int* parentLayer, int* parentMatrixID)
+{
+	if (childLayer > 0)
+		(*parentLayer) = childLayer - 1;
+	else
+		throw;
+	if (branching[(*parentLayer)] > 0)
+		(*parentMatrixID) = childMatrixID / branching[(*parentLayer)];
+	else
+		(*parentMatrixID) = childMatrixID;
+}
+
+NetMatrix* ConvNeuralNetwork::getParentMatrix(int childLayer, int childMatrixID)
+{
+	int parentLayer = 0;
+	int parentMatrixID = 0;
+	getParentMatrix(childLayer, childMatrixID, &parentLayer, &parentMatrixID);
+	return matrices[parentLayer][parentMatrixID];
+}
+
+NetMatrix* ConvNeuralNetwork::getParentErrorMatrix(int childLayer, int childMatrixID)
+{
+	int parentLayer = 0;
+	int parentMatrixID = 0;
+	getParentMatrix(childLayer, childMatrixID, &parentLayer, &parentMatrixID);
+	return errorMatrices[parentLayer][parentMatrixID];
+}
+
+int ConvNeuralNetwork::getChildMatricesCount(int l, int m)
+{
+	return branching[l];
+}
+
+void ConvNeuralNetwork::getChildMatrix(int l, int m, int childID, int* childLayer, int* childMatrixID)
+{
+	if (l < 0 || m < 0 || childID < 0) throw;
+	if (l + 1 >= layersCount || m >= matricesCount[l]) throw;
+
+	int childMatricesCount = getChildMatricesCount(l, m);
+	childMatricesCount = (childMatricesCount > 0 ? childMatricesCount : 1);
+
+	if (childID >= childMatricesCount) throw;
+
+	(*childLayer) = l + 1;
+	(*childMatrixID) = childMatricesCount * m + childID;
+
+	if ((*childMatrixID) >= matricesCount[(*childLayer)]) throw;
+}
+
+NetMatrix* ConvNeuralNetwork::getChildMatrix(int l, int m, int childID)
+{
+	int childLayer = 0;
+	int childMatrixID = 0;
+	getChildMatrix(l, m, childID, &childLayer, &childMatrixID);
+	return matrices[childLayer][childMatrixID];
+}
+
+NetMatrix* ConvNeuralNetwork::getChildErrorMatrix(int l, int m, int childID)
+{
+	int childLayer = 0;
+	int childMatrixID = 0;
+	getChildMatrix(l, m, childID, &childLayer, &childMatrixID);
+	return errorMatrices[childLayer][childMatrixID];
+}
+
+void ConvNeuralNetwork::setAllWeightsRandom(int seed, int leftEdge, int rightEdge, int accuracy)
+{
+	for (int l = 0; l < layersCount; l++)
+		for (int m = 0; m < matricesCount[l]; m++)
+			matrices[l][m]->setRandomWeights(seed, leftEdge, rightEdge, accuracy);
 }

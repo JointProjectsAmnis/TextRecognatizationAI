@@ -130,34 +130,35 @@ void main()
 	double** inputData;
 	ConvNeuralNetwork::ConvNeuralNetDesc netDesc{};
 	netDesc.branching = new int[] { 3, 0, 2, 0, 1 };
-	netDesc.defaultKernelOrigin = { 20, 20 };
-	netDesc.defaultKernelSize = 40;
+	netDesc.defaultKernelOrigin = { 1, 1 };
+	netDesc.defaultKernelSize = 3;
 	netDesc.defaultPoolingSize = { 2, 2 };
-	ConvNeuralNetwork net({20, 20}, 5, netDesc);
+	ConvNeuralNetwork net({5, 5}, 5, netDesc);
 
 	inputData = new double* [net.matrices[0][0]->matrixSizeX];
 	for (int x = 0; x < net.matrices[0][0]->matrixSizeX; x++)
 	{
 		inputData[x] = new double[net.matrices[0][0]->matrixSizeY];
 		for (int y = 0; y < net.matrices[0][0]->matrixSizeY; y++)
-			inputData[x][y] = 1;
+			inputData[x][y] = (rand() % 10) / 10.0;
 	}
 
+	net.setAllWeightsRandom(25, -1, 1, 1000);
 	net.forwardPropagation(inputData, net.matrices[0][0]->matrixSizeX * net.matrices[0][0]->matrixSizeY * sizeof(double));
 
-	NetMatrix matrix0(2, 2);
-	NetMatrix matrix1(2, 2, 3, 1, 1, 1);
+	//NetMatrix matrix0(2, 2);
+	//NetMatrix matrix1(2, 2, 3, 1, 1, 1);
 
-	matrix1.setRandomWeights(256, -1, 1, 1000);
+	//matrix1.setRandomWeights(256, -1, 1, 1000);
 
-	for(int y = 0; y < 2; y++)
-		for (int x = 0; x < 2; x++)
-		{
-			matrix0.matrix[x][y] = rand() % 10;
-		}
+	//for(int y = 0; y < 2; y++)
+	//	for (int x = 0; x < 2; x++)
+	//	{
+	//		matrix0.matrix[x][y] = rand() % 10;
+	//	}
 
-	matrix0.convolute(&matrix1);
-	printMatrix(matrix0);
-	std::cout << std::endl;
-	printMatrix(matrix1);
+	//matrix0.convolute(&matrix1);
+	//printMatrix(matrix0);
+	//std::cout << std::endl;
+	//printMatrix(matrix1);
 }

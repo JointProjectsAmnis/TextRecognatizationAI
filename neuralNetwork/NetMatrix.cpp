@@ -74,6 +74,13 @@ void NetMatrix::setRandomWeights(int seed, int module, double devider, double of
 void NetMatrix::setRandomWeights(int seed, int leftEdge, int rightEdge, int accuracy)
 {
 	if (leftEdge > rightEdge) throw;
+	if (leftEdge == rightEdge)
+	{
+		for (int y = 0; y < kernelSize; y++)
+			for (int x = 0; x < kernelSize; x++)
+				kernel[x][y] = leftEdge;
+		return;
+	}
 
 	int length = rightEdge - leftEdge;
 	srand(seed);
