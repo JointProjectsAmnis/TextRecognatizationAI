@@ -39,6 +39,10 @@
     <ClInclude Include="WindowsClasses\DirectX3D\ConstantBuffer.h" />
     <ClInclude Include="WindowsClasses\DirectX3D\Texture.h" />
     <ClInclude Include="WindowsClasses\DirectX3D\Sampler.h" />
+    <ClInclude Include="Window application\WindowInterfaceForNeuralNet.h" />
+    <ClInclude Include="Window application\ButtonChooserImage.h" />
+    <ClInclude Include="Window application\GraphicsContextImage.h" />
+    <ClInclude Include="Window application\Content.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Data\Image.cpp" />
@@ -61,6 +65,10 @@
     <ClCompile Include="WindowsClasses\DirectX3D\ConstantBuffer.cpp" />
     <ClCompile Include="WindowsClasses\DirectX3D\Texture.cpp" />
     <ClCompile Include="WindowsClasses\DirectX3D\Sampler.cpp" />
+    <ClCompile Include="Window application\WindowInterfaceForNeuralNet.cpp" />
+    <ClCompile Include="Window application\ButtonChooserImage.cpp" />
+    <ClCompile Include="Window application\GraphicsContextImage.cpp" />
+    <ClCompile Include="Window application\Content.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

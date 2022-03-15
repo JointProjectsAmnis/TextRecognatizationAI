@@ -17,6 +17,9 @@ public:
     HBRUSH backgroundColor;
     bool toCreateNewClass = false;
 
+    int posX, posY;
+    int sizeX, sizeY;
+
     bool isClosed = false;
 
     HFONT font = NULL;

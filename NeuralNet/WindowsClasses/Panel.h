@@ -5,9 +5,21 @@ class Panel : public BaseWindow
 {
 public:
 
+	int borderRadiusX = 0;
+	int borderRadiusY = 0;
+
 	Panel(
 		LPCWSTR lpWindowName,
 		HBRUSH backgroundColor,
+		BaseWindow* parent = NULL,
+		HMENU hMenu = AUTO_CODE,
+		DWORD dwStyle = WS_OVERLAPPED);
+
+	Panel(
+		LPCWSTR lpWindowName,
+		HBRUSH backgroundColor,
+		int borderRadiusX,
+		int borderRadiusY,
 		BaseWindow* parent = NULL,
 		HMENU hMenu = AUTO_CODE,
 		DWORD dwStyle = WS_OVERLAPPED);

@@ -6,10 +6,11 @@ Brush::Brush()
 	brush = brushDefault.GetBrush();
 }
 
-Brush::Brush(COLORREF color)
+Brush::Brush(Brush::Color color)
 {
-	this->color = color;
-	this->brush = CreateSolidBrush(color);
+	this->colorRGB = { color.r / 255.0f, color.g / 255.0f, color.b / 255.0f, color.a / 255.0f };
+	this->color = RGB(color.r, color.g, color.b);
+	this->brush = CreateSolidBrush(this->color);
 }
 
 Brush::Brush(HBRUSH brush)
@@ -28,6 +29,14 @@ COLORREF Brush::GetColor()
 		throw;
 	else
 		return color;
+}
+
+Brush::Color Brush::GetColorRGB()
+{
+	if (color == NONCOLOR)
+		throw;
+	else
+		return colorRGB;
 }
 
 HBRUSH Brush::GetBrush()

@@ -58,6 +58,11 @@ void BaseWindow::Create(
     if (hwnd != NULL)
         return;
 
+    this->posX = X;
+    this->posY = Y;
+    this->sizeX = nWidth;
+    this->sizeY = nHeight;
+
     if (toCreateNewClass)
     {
         WNDCLASS wc = {};

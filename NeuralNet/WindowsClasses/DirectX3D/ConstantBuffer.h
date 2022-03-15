@@ -9,6 +9,7 @@ public:
 
 	Graphics* graphics;
 
+	ConstantBuffer(Graphics* graphics, UINT sizeData);
 	ConstantBuffer(Graphics* graphics, void* data, UINT sizeData);
 	~ConstantBuffer();
 	

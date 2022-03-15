@@ -1,5 +1,21 @@
 #include "ConstantBuffer.h"
 
+ConstantBuffer::ConstantBuffer(Graphics* graphics, UINT sizeData)
+{
+	this->graphics = graphics;
+
+	D3D11_BUFFER_DESC desc = {};
+	desc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	desc.Usage = D3D11_USAGE_DYNAMIC;
+	desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	desc.MiscFlags = 0u;
+	desc.ByteWidth = sizeData;
+	desc.StructureByteStride = 0u;
+
+	HRESULT hr = graphics->device->CreateBuffer(&desc, NULL, &buffer);
+	if (FAILED(hr)) throw;
+}
+
 ConstantBuffer::ConstantBuffer(Graphics* graphics, void* data, UINT sizeData)
 {
 	this->graphics = graphics;
