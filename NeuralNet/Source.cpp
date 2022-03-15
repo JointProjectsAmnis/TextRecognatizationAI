@@ -125,15 +125,38 @@ void printMatrix(NetMatrix &matrix)
 	}
 }
 
+void printKernel(NetMatrix* matrix)
+{
+	for (int y = 0; y < matrix->kernelSize; y++)
+	{
+		for (int x = 0; x < matrix->kernelSize; x++)
+		{
+			std::cout << matrix->kernel[x][y] << " ";
+		}
+		std::cout << std::endl;
+	}
+}
+
 void main()
 {
+	const char* pathInput = "E:\\Университет\\Английский язык\\Проект (нейросеть)\\TextRecognatizationAI\\Images\\Input\\image.png";
+	const char* pathTeather = "E:\\Университет\\Английский язык\\Проект (нейросеть)\\TextRecognatizationAI\\Images\\Teather\\*";
+	const char* pathOutput = "E:\\Университет\\Английский язык\\Проект (нейросеть)\\TextRecognatizationAI\\Images\\Output\\OutputImage.bmp";
+	int width, height, channels = 1;
+	unsigned char* byteImage = SOIL_load_image(pathInput, &width, &height, &channels, 1);
+
+
 	double** inputData;
 	ConvNeuralNetwork::ConvNeuralNetDesc netDesc{};
+
+	int layersCount = 5;
 	netDesc.branching = new int[] { 3, 0, 2, 0, 1 };
-	netDesc.defaultKernelOrigin = { 1, 1 };
-	netDesc.defaultKernelSize = 3;
+	//netDesc.branching = new int[layersCount] { 1, 1 };
+	netDesc.defaultKernelOrigin = { 10, 10 };
+	netDesc.defaultKernelSize = 20;
 	netDesc.defaultPoolingSize = { 2, 2 };
-	ConvNeuralNetwork net({5, 5}, 5, netDesc);
+	ConvNeuralNetwork net({ width, height }, layersCount, netDesc);
+	net.setAllWeightsRandom(293, -1, 1, 1000);
 
 	inputData = new double* [net.matrices[0][0]->matrixSizeX];
 	for (int x = 0; x < net.matrices[0][0]->matrixSizeX; x++)
@@ -143,22 +166,34 @@ void main()
 			inputData[x][y] = (rand() % 10) / 10.0;
 	}
 
-	net.setAllWeightsRandom(25, -1, 1, 1000);
-	net.forwardPropagation(inputData, net.matrices[0][0]->matrixSizeX * net.matrices[0][0]->matrixSizeY * sizeof(double));
+	double* image = nullptr;
+	chToFl(byteImage, image, width, height, 1);
 
-	//NetMatrix matrix0(2, 2);
-	//NetMatrix matrix1(2, 2, 3, 1, 1, 1);
+	double** intputMatrix = new double* [width];
+	for (int x = 0; x < width; x++)
+	{
+		intputMatrix[x] = new double[height];
+		for (int y = 0; y < height; y++)
+		{
+			intputMatrix[x][y] = image[x + y * width];
+		}
+	}
 
-	//matrix1.setRandomWeights(256, -1, 1, 1000);
+	int lastNeuronsCount = 0;
+	for (int m = 0; m < net.matricesCount[net.layersCount - 1]; m++)
+		lastNeuronsCount += net.matrices[net.layersCount - 1][m]->matrixSizeX * net.matrices[net.layersCount - 1][m]->matrixSizeY;
 
-	//for(int y = 0; y < 2; y++)
-	//	for (int x = 0; x < 2; x++)
-	//	{
-	//		matrix0.matrix[x][y] = rand() % 10;
-	//	}
+	double* outputData = new double[lastNeuronsCount];
+	for (int i = 0; i < lastNeuronsCount; i++)
+		outputData[i] = (rand() % 1000) / 1000.0;
 
-	//matrix0.convolute(&matrix1);
-	//printMatrix(matrix0);
-	//std::cout << std::endl;
-	//printMatrix(matrix1);
+	int countGeneration = 1000000;
+	for (int g = 0; g < countGeneration; g++)
+	{
+		net.forwardPropagation(intputMatrix, net.matrices[0][0]->matrixSizeX * net.matrices[0][0]->matrixSizeY * sizeof(double));
+		net.backPropagation(outputData, lastNeuronsCount * sizeof(double), 0.001f, 0.3f);
+
+		if (g % 100 == 0)
+			std::cout << net.getError(outputData, lastNeuronsCount * sizeof(double)) << std::endl;
+	}
 }
