@@ -205,50 +205,106 @@ void ConvNeuralNetwork::calculateErrors(double* output)
 
 	for (int l = layersCount - 2; l >= 0; l--)
 	{
+		for (int m0 = 0; m0 < matricesCount[l]; m0++)
+		{
+			int childsCount = 0;
+			int childsLayer = 0;
+			int firstChildMatrixID = 0;
+			getChildMatrix(l, m0, 0, &childsLayer, &firstChildMatrixID);
+			childsCount = getChildMatricesCount(l, m0);
 
-			for (int m0 = 0; m0 < matricesCount[l]; m0++)
-			{	
-				int childMatricesCount = getChildMatricesCount(l, m0);
-
-				int childsLayer = 0;
-				int firstChildMatrixID = 0;
-
-				getChildMatrix(l, m0, 0, &childsLayer, &firstChildMatrixID);
-
-				for (int y = 0; y < matrices[l][m0]->matrixSizeY; y++)
-					for (int x = 0; x < matrices[l][m0]->matrixSizeX; x++)
+			for(int y0 = 0; y0 < matrices[l][m0]->matrixSizeY; y0++)
+				for (int x0 = 0; x0 < matrices[l][m0]->matrixSizeX; x0++)
+				{
+					errorMatrices[l][m0]->matrix[x0][y0] = 0;
+					for (int m1 = firstChildMatrixID; m1 < firstChildMatrixID + childsCount; m1++)
 					{
-						errorMatrices[l][m0]->matrix[x][y] = 0;
-						for (int m1 = firstChildMatrixID; m1 < firstChildMatrixID + childMatricesCount; m1++)
-						{
-							int kernelLeftUpInMatrixX = x - matrices[childsLayer][m1]->kernelOriginX;
-							int kernelLeftUpInMatrixY = y - matrices[childsLayer][m1]->kernelOriginY;
+						int kernelOriginLeftX = x0 - ((matrices[childsLayer][m1]->kernelSize - 1) - matrices[childsLayer][m1]->kernelOriginX);// Here may be an error
+						int kernelOriginUpY = y0 - ((matrices[childsLayer][m1]->kernelSize - 1) - matrices[childsLayer][m1]->kernelOriginY);// Here may be an error
 
-							for (int ky = kernelLeftUpInMatrixY; ky < kernelLeftUpInMatrixY + matrices[childsLayer][m1]->kernelSize; ky++)
-								for (int kx = kernelLeftUpInMatrixX; kx < kernelLeftUpInMatrixX + matrices[childsLayer][m1]->kernelSize; kx++)
-								{
-									if (kx >= 0 && kx < matrices[childsLayer][m1]->matrixSizeX)
-										if (ky >= 0 && ky < matrices[childsLayer][m1]->matrixSizeY)
-										{
-												int kernelX = kx - kernelLeftUpInMatrixX;
-												int kernelY = ky - kernelLeftUpInMatrixY;
+						int kernelOriginRightX = x0 + matrices[childsLayer][m1]->kernelOriginX;
+						int kernelOriginDownY = y0 + matrices[childsLayer][m1]->kernelOriginY;
 
-												double weight = branching[l] > 0 ? matrices[childsLayer][m1]->kernel[kernelX][kernelY] : 1; // Pooling is taken in accaunt
-												double childError = errorMatrices[childsLayer][m1]->matrix[kx][ky];
-												double neuron = matrices[l][m0]->matrix[x][y];
+						for (int oy = kernelOriginUpY; oy <= kernelOriginDownY; oy++)
+							for (int ox = kernelOriginLeftX; ox <= kernelOriginRightX; ox++)
+							{
+								if(ox >= 0 && ox < matrices[childsLayer][m1]->matrixSizeX)
+									if (oy >= 0 && oy < matrices[childsLayer][m1]->matrixSizeY)
+									{
+										int leftUpKernelX = ox - matrices[childsLayer][m1]->kernelOriginX;
+										int leftUpKernelY = oy - matrices[childsLayer][m1]->kernelOriginY;
 
-												errorMatrices[l][m0]->matrix[x][y] += childError * weight * neuron * (1 - neuron);
+										int neuronPosInKernelX = x0 - leftUpKernelX;
+										int neuronPosInKernelY = y0 - leftUpKernelY;
 
-												if (childError != 0)
-													int point = 0;
 
-										}
-								}
-	
-						}
+
+
+										// You need to accaunt for pooling
+
+
+
+										double childError = errorMatrices[childsLayer][m1]->matrix[ox][oy];
+										double weight = matrices[childsLayer][m1]->kernel[neuronPosInKernelX][neuronPosInKernelY];
+										double neuron = matrices[l][m0]->matrix[x0][y0];
+
+										errorMatrices[l][m0]->matrix[x0][y0] += childError * weight * neuron * (1 - neuron);
+									}
+							}
 					}
-			}
+				}
+		}
 	}
+
+
+
+
+	//for (int l = layersCount - 2; l >= 0; l--)
+	//{
+
+	//		for (int m0 = 0; m0 < matricesCount[l]; m0++)
+	//		{	
+	//			int childMatricesCount = getChildMatricesCount(l, m0);
+
+	//			int childsLayer = 0;
+	//			int firstChildMatrixID = 0;
+
+	//			getChildMatrix(l, m0, 0, &childsLayer, &firstChildMatrixID);
+
+	//			for (int y = 0; y < matrices[l][m0]->matrixSizeY; y++)
+	//				for (int x = 0; x < matrices[l][m0]->matrixSizeX; x++)
+	//				{
+	//					errorMatrices[l][m0]->matrix[x][y] = 0;
+	//					for (int m1 = firstChildMatrixID; m1 < firstChildMatrixID + childMatricesCount; m1++)
+	//					{
+	//						int kernelLeftUpInMatrixX = x - matrices[childsLayer][m1]->kernelOriginX;
+	//						int kernelLeftUpInMatrixY = y - matrices[childsLayer][m1]->kernelOriginY;
+
+	//						for (int ky = kernelLeftUpInMatrixY; ky < kernelLeftUpInMatrixY + matrices[childsLayer][m1]->kernelSize; ky++)
+	//							for (int kx = kernelLeftUpInMatrixX; kx < kernelLeftUpInMatrixX + matrices[childsLayer][m1]->kernelSize; kx++)
+	//							{
+	//								if (kx >= 0 && kx < matrices[childsLayer][m1]->matrixSizeX)
+	//									if (ky >= 0 && ky < matrices[childsLayer][m1]->matrixSizeY)
+	//									{
+	//											int kernelX = kx - kernelLeftUpInMatrixX;
+	//											int kernelY = ky - kernelLeftUpInMatrixY;
+
+	//											double weight = branching[l] > 0 ? matrices[childsLayer][m1]->kernel[kernelX][kernelY] : 1; // Pooling is taken in accaunt
+	//											double childError = errorMatrices[childsLayer][m1]->matrix[kx][ky];
+	//											double neuron = matrices[l][m0]->matrix[x][y];
+
+	//											errorMatrices[l][m0]->matrix[x][y] += childError * weight * neuron * (1 - neuron);
+
+	//											if (childError != 0)
+	//												int point = 0;
+
+	//									}
+	//							}
+	//
+	//					}
+	//				}
+	//		}
+	//}
 }
 
 void ConvNeuralNetwork::correctWeights(double k, double a)
