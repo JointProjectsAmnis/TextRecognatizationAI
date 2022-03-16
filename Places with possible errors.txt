@@ -1,0 +1,43 @@
+1) NetMatrix::deconvolute
+	Error might be with other values of kernelStride, x(kernelOriginX), x(kernelOriginY), x(kernelSize)
+
+2) NetMatrix::unpool
+	x(There's no odd poolSize support)(but maybe something missed)
+ 
+3) DeconvNeuralNetwork::DeconvNeuralNetwork
+	1. x(layersCount)
+	2. x(branching)
+	3. x(unpoolingLayers) (It would be better to make it in branching)
+	4. x(inputMatricesSize)
+	5. x(unpoolingSize)
+	6. x(matricesCount)
+
+4) DeconvNeuralNetwork::forwardPropagation HERE MAY BE AN ERROR
+	1. x(input)
+	2. x(inputDataSize)
+
+5) DeconvNeuralNetwork::getParentErrorMatrix
+	1. This function is not tested
+
+
+6) DeconvNeuralNetwork::calculateErrors
+	1. kernelStride is not taken into accaunt
+	2. x(Last layer errors)
+	3. x(Hidden layers errors)
+	4. x(Hidden layers unpooling errors)
+
+
+
+Some places with possible errors:
+	kernelStride is not customized
+	NetMatrix.oldDeltaKrenel
+
+
+----------------Convolution neural network-------------------------------
+
+1) NetMatrix.pool (Here less possible be error)
+2) NetMatrix.convolute
+3) ConvNeuralNetwork.calculateErrors (outputID)
+
+
+

@@ -13,8 +13,8 @@ public:
 	SampleData(ISample** sample, int countSamples);
 	SampleData(char* pathInput, char* pathOutput, int channel = -1);
 
-	float* getInputData(int id);
-	float* getOutputData(int id);
+	double* getInputData(int id);
+	double* getOutputData(int id);
 
 	//SampleImage* getSampleImage(int id);
 	SampleImage* getSampleImage(int id);

@@ -14,8 +14,8 @@ public:
 
 	virtual void realese() override;
 
-	virtual float* getInputData(int id) override;
-	virtual float* getOutputData(int id) override;
+	virtual double* getInputData(int id) override;
+	virtual double* getOutputData(int id) override;
 
 	static SampleImageTest** createSamples(ImageData* inputData, ImageData* outputData);
 	//static SampleData* createSampleData(char* pathInput, char* pathOutput);
