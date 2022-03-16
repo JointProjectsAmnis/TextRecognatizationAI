@@ -151,7 +151,7 @@ void printKernel(NetMatrix* matrix)
 	}
 }
 
-void mainWinAPI()
+void main()
 {
 	setlocale(LC_ALL, "ru");
 	CoInitializeEx(NULL, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);
@@ -178,7 +178,7 @@ void mainWinAPI()
 	}
 }
 
-void main()
+void mainDeconv()
 {
 	const char* pathInput = "..\\Images\\Input\\image.png";
 	const char* pathTeather = "..\\Images\\Teather\\*";
