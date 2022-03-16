@@ -24,13 +24,15 @@ float4 main(Input input) : SV_TARGET
 
 	float  spriteOffsetY = (1 - 1.0f / cof) / 2.0f;
 
-	float4 spriteRect = float4(0, spriteOffsetY, 1, 1.0f / cof + spriteOffsetY);
+	float4 spriteRect = float4(0, 0, 1, 1.0f / cof);
 
-	float2 screenPos = float2((input.pixelPos.x + 1) / 2.0f, -((input.pixelPos.y + 1) / 2.0f));
+	float2 screenPos = float2((input.pixelPos.x + 1) / 2.0f, 1 - ((input.pixelPos.y + 1) / 2.0f));
 
-	if (Clamp(float2(screenPos.x, -screenPos.y), spriteRect))
+	float2 spritePos = {0, (1 - 1.0f / cof) / 2.0f};
+
+	if (Clamp(screenPos - spritePos, spriteRect))
 	{
-		float2 coord = float2(screenPos.x, screenPos.y * cof + spriteOffsetY + 0.025f);
+		float2 coord = float2(screenPos.x, (screenPos.y - spritePos.y) * cof);
 		float4 imagePixel = tex.Sample(sm, coord);
 		return float4(imagePixel.x, imagePixel.y, imagePixel.z, 1);
 	}

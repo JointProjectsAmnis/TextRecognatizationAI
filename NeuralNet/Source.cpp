@@ -7,6 +7,9 @@ processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 #include "Window application/GraphicsContextImage.h"
 #include "Window application/Content.h"
 
+//Compute shader
+#include "WindowsClasses/DirectX3D/Shaders/ShaderCompute.h"
+
 void main()
 {
 	setlocale(LC_ALL, "ru");
@@ -18,6 +21,8 @@ void main()
 
 	GraphicsContextImage* graphicsContextImage = new GraphicsContextImage(windowInterface);
 	windowInterface->SetGraphics(graphicsContextImage);
+
+	//ShaderCompute shader = ShaderCompute(graphicsContextImage->graphics, L"WindowsClasses\\DirectX3D\\Shaders\\ShaderComputeTest\\ShaderComputeTest.hlsl");
 
 	MSG msg = {};
 	while (!windowInterface->windowMain->isClosed)

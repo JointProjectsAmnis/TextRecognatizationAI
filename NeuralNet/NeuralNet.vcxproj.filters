@@ -43,6 +43,9 @@
     <ClInclude Include="Window application\ButtonChooserImage.h" />
     <ClInclude Include="Window application\GraphicsContextImage.h" />
     <ClInclude Include="Window application\Content.h" />
+    <ClInclude Include="WindowsClasses\DirectX3D\StructuredBuffer.h" />
+    <ClInclude Include="WindowsClasses\DirectX3D\Shaders\ShaderCompute.h" />
+    <ClInclude Include="WindowsClasses\DirectX3D\UnorderedBuffer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Data\Image.cpp" />
@@ -69,6 +72,9 @@
     <ClCompile Include="Window application\ButtonChooserImage.cpp" />
     <ClCompile Include="Window application\GraphicsContextImage.cpp" />
     <ClCompile Include="Window application\Content.cpp" />
+    <ClCompile Include="WindowsClasses\DirectX3D\StructuredBuffer.cpp" />
+    <ClCompile Include="WindowsClasses\DirectX3D\Shaders\ShaderCompute.cpp" />
+    <ClCompile Include="WindowsClasses\DirectX3D\UnorderedBuffer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -80,5 +86,6 @@
     <FxCompile Include="WindowsClasses\DirectX3D\Shaders\ShaderTriangle\ShaderPixelTriangle.hlsl" />
     <FxCompile Include="WindowsClasses\DirectX3D\Shaders\ShaderImage\ShaderVertexImage.hlsl" />
     <FxCompile Include="WindowsClasses\DirectX3D\Shaders\ShaderImage\ShaderPixelImage.hlsl" />
+    <FxCompile Include="WindowsClasses\DirectX3D\Shaders\ShaderComputeTest\ShaderComputeTest.hlsl" />
   </ItemGroup>
 </Project>
