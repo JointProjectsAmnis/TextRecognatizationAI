@@ -151,7 +151,7 @@ void printKernel(NetMatrix* matrix)
 	}
 }
 
-void winAPIMain()
+void mainWinAPI()
 {
 	setlocale(LC_ALL, "ru");
 	CoInitializeEx(NULL, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);
@@ -180,9 +180,9 @@ void winAPIMain()
 
 void main()
 {
-	const char* pathInput = "E:\\Университет\\Английский язык\\Проект (нейросеть)\\TextRecognatizationAI\\Images\\Input\\image.png";
-	const char* pathTeather = "E:\\Университет\\Английский язык\\Проект (нейросеть)\\TextRecognatizationAI\\Images\\Teather\\*";
-	const char* pathOutput = "E:\\Университет\\Английский язык\\Проект (нейросеть)\\TextRecognatizationAI\\Images\\Output\\OutputImage.bmp";
+	const char* pathInput = "..\\Images\\Input\\image.png";
+	const char* pathTeather = "..\\Images\\Teather\\*";
+	const char* pathOutput = "..\\Images\\Output\\OutputImage.bmp";
 	int width, height, channels = 1;
 	unsigned char* byteImage = SOIL_load_image(pathInput, &width, &height, &channels, 1);
 

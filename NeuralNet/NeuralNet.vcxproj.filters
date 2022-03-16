@@ -2,9 +2,6 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <CudaCompile Include="kernel.cu" />
-    <CudaCompile Include="NeuralNet\NeuralNetDebug.cu" />
-    <CudaCompile Include="NeuralNet\CalculateDot.cu" />
-    <CudaCompile Include="NeuralNet\Tset.cu" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Header.h" />
@@ -16,8 +13,6 @@
     <ClInclude Include="Data\Samples\ISample.h" />
     <ClInclude Include="Data\Samples\SampleImage.h" />
     <ClInclude Include="Data\SampleData.h" />
-    <ClInclude Include="NeuralNet\INeuralNet.h" />
-    <ClInclude Include="NeuralNet\NeuralNetDebug.cuh" />
     <ClInclude Include="Data\Samples\SampleImageTest.h" />
     <ClInclude Include="WindowsClasses\BaseWindow.h" />
     <ClInclude Include="WindowsClasses\Buttons\Button.h" />

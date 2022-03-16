@@ -55,8 +55,10 @@
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
-      <AdditionalDependencies>neuralNetwork.lib;opengl32.lib;cudart_static.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>neuralNetwork.lib;d3dcompiler.lib;d3d11.lib;UxTheme.lib;ComCtl32.lib;opengl32.lib;cudart_static.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)$(IntDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <EntryPointSymbol>
+      </EntryPointSymbol>
     </Link>
     <CudaCompile>
       <TargetMachinePlatform>64</TargetMachinePlatform>
@@ -77,8 +79,10 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <SubSystem>Console</SubSystem>
-      <AdditionalDependencies>neuralNetwork.lib;opengl32.lib;cudart_static.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>neuralNetwork.lib;d3dcompiler.lib;d3d11.lib;UxTheme.lib;ComCtl32.lib;opengl32.lib;cudart_static.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)$(IntDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <EntryPointSymbol>
+      </EntryPointSymbol>
     </Link>
     <CudaCompile>
       <TargetMachinePlatform>64</TargetMachinePlatform>
@@ -86,9 +90,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <CudaCompile Include="kernel.cu" />
-    <CudaCompile Include="NeuralNet\CalculateDot.cu" />
-    <CudaCompile Include="NeuralNet\NeuralNetDebug.cu" />
-    <CudaCompile Include="NeuralNet\Tset.cu" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="WindowsClasses\DirectX3D\UnorderedBuffer.h" />
@@ -123,8 +124,6 @@
     <ClInclude Include="Data\Samples\ISample.h" />
     <ClInclude Include="Header.h" />
     <ClInclude Include="Data\ImageData.h" />
-    <ClInclude Include="NeuralNet\INeuralNet.h" />
-    <ClInclude Include="NeuralNet\NeuralNetDebug.cuh" />
     <ClInclude Include="PathManager.h" />
     <ClInclude Include="Data\Samples\SampleImage.h" />
     <ClInclude Include="Data\SampleData.h" />
