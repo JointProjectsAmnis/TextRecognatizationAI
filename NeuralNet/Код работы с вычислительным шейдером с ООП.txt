@@ -1,0 +1,22 @@
+	ShaderCompute shader = ShaderCompute(graphicsContextImage->graphics, L"WindowsClasses\\DirectX3D\\Shaders\\ShaderComputeTest\\ShaderComputeTest.hlsl");
+	
+	int sizeData = 1024;
+	float* buffer = new float[sizeData];
+	for (int x = 0; x < sizeData; x++)
+		buffer[x] = 123;
+
+	UnorderedBuffer outputBuffer = UnorderedBuffer(graphicsContextImage->graphics, sizeData, sizeof(float), buffer);
+	UnorderedBuffer outputBufferResult = UnorderedBuffer(graphicsContextImage->graphics, sizeData, sizeof(float), D3D11_USAGE_STAGING, 0, D3D11_CPU_ACCESS_READ);
+
+	outputBuffer.Bind(0);
+	shader.BindShader();
+	graphicsContextImage->graphics->Dispatch(32, 32, 1);
+
+	outputBufferResult.CopyResource(outputBuffer.buffer);
+
+	outputBufferResult.Map(D3D11_MAP_READ);
+	outputBufferResult.ReadMem(buffer, sizeData * sizeof(float), 0);
+	outputBufferResult.UnMap();
+
+	for (int x = 0; x < sizeData; x++)
+		std::cout << buffer[x] << std::endl;

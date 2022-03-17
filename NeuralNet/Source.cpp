@@ -47,67 +47,6 @@ void main()
 	for (int x = 0; x < sizeData; x++)
 		std::cout << buffer[x] << std::endl;
 
-	int point = 0;
-
-	
-
-	////Инициализация буффера, куда будут записываться данные
-	//ID3D11Buffer* outputBuffer;
-	//D3D11_BUFFER_DESC desc = {};
-	//desc.Usage				 = D3D11_USAGE_DEFAULT;
-	//desc.ByteWidth			 = sizeof(float) * sizeData;
-	//desc.BindFlags			 = D3D11_BIND_UNORDERED_ACCESS;
-	//desc.CPUAccessFlags		 = D3D11_CPU_ACCESS_WRITE;
-	//desc.StructureByteStride = sizeof(float);
-	//desc.MiscFlags			 = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
-
-	//HRESULT hr = graphicsContextImage->graphics->device->CreateBuffer(&desc, NULL, &outputBuffer);
-	//if (FAILED(hr)) throw;
-
-	////Создание view для outputBuffer
-	//ID3D11UnorderedAccessView* unorderedView;
-	//D3D11_UNORDERED_ACCESS_VIEW_DESC uavDesc = {};
-	//uavDesc.Buffer.FirstElement = 0;
-	//uavDesc.Buffer.Flags		= 0;
-	//uavDesc.Buffer.NumElements	= sizeData;
-	//uavDesc.Format				= DXGI_FORMAT_UNKNOWN;
-	//uavDesc.ViewDimension		= D3D11_UAV_DIMENSION_BUFFER;
-
-	//hr = graphicsContextImage->graphics->device->CreateUnorderedAccessView(outputBuffer, &uavDesc, &unorderedView);
-	//if (FAILED(hr)) throw;
-
-	////Инициализация буффера, из которого данные будут забираться на CPU
-	//ID3D11Buffer* outputBufferResult;
-	//desc.Usage			= D3D11_USAGE_STAGING;
-	//desc.BindFlags		= 0;
-	//desc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
-
-	//hr = graphicsContextImage->graphics->device->CreateBuffer(&desc, NULL, &outputBufferResult);
-	//if (FAILED(hr)) throw;
-
-	//
-	////Запуск вычислительного шейдера
-	//graphicsContextImage->graphics->context->CSSetUnorderedAccessViews(0, 1, &unorderedView, 0);
-	//shader.BindShader();
-	//graphicsContextImage->graphics->Dispatch(32, 32, 1);
-
-
-	////Копирование результата работы вычислительного шейдерена на CPU
-	//graphicsContextImage->graphics->context->CopyResource(outputBufferResult, outputBuffer);
-	//
-	//D3D11_MAPPED_SUBRESOURCE mappedResource;
-	//hr = graphicsContextImage->graphics->context->Map(outputBufferResult, 0, D3D11_MAP_READ, 0, &mappedResource);
-	//if (FAILED(hr)) throw;
-
-	//memcpy(buffer, mappedResource.pData, sizeData * sizeof(float));
-
-	//graphicsContextImage->graphics->context->Unmap(outputBufferResult, 0);
-
-
-	////Выведение результата
-	//for (int x = 0; x < sizeData; x++)
-	//	std::cout << buffer[x] << std::endl;
-
 	MSG msg = {};
 	while (!windowInterface->windowMain->isClosed)
 	{
