@@ -151,7 +151,7 @@ void printKernel(NetMatrix* matrix)
 	}
 }
 
-void main()
+void graphicsMain()
 {
 	setlocale(LC_ALL, "ru");
 	CoInitializeEx(NULL, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);
@@ -266,7 +266,7 @@ void conv()
 	}
 }
 
-void main1()
+void main()
 {
 
 }
