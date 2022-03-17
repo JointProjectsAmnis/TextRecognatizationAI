@@ -12,7 +12,7 @@ processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 #include "WindowsClasses/DirectX3D/UnorderedBuffer.h"
 
 
-void main()
+void mainGraphic()
 {
 	setlocale(LC_ALL, "ru");
 	CoInitializeEx(NULL, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);
@@ -25,7 +25,7 @@ void main()
 	windowInterface->SetGraphics(graphicsContextImage);
 
 	ShaderCompute shader = ShaderCompute(graphicsContextImage->graphics, L"WindowsClasses\\DirectX3D\\Shaders\\ShaderComputeTest\\ShaderComputeTest.hlsl");
-	
+
 	int sizeData = 1024;
 	float* buffer = new float[sizeData];
 	for (int x = 0; x < sizeData; x++)
@@ -206,13 +206,13 @@ void printNeuralNet(ConvNeuralNetwork& net)
 	}
 }
 
-void printMatrix(NetMatrix& matrix)
+void printMatrix(NetMatrix* matrix)
 {
-	for (int y = 0; y < matrix.matrixSizeY; y++)
+	for (int y = 0; y < matrix->matrixSizeY; y++)
 	{
-		for (int x = 0; x < matrix.matrixSizeX; x++)
+		for (int x = 0; x < matrix->matrixSizeX; x++)
 		{
-			std::cout << matrix.matrix[x][y] << " ";
+			std::cout << matrix->matrix[x][y] << " ";
 		}
 		std::cout << std::endl;
 	}
@@ -230,7 +230,7 @@ void printKernel(NetMatrix* matrix)
 	}
 }
 
-void mainDeconv()
+void conv()
 {
 	const char* pathInput = "..\\Images\\Input\\image.png";
 	const char* pathTeather = "..\\Images\\Teather\\*";
@@ -238,18 +238,19 @@ void mainDeconv()
 	int width, height, channels = 1;
 	unsigned char* byteImage = SOIL_load_image(pathInput, &width, &height, &channels, 1);
 
+	width = 10;
+	height = 10;
 
 	double** inputData;
 	ConvNeuralNetwork::ConvNeuralNetDesc netDesc{};
 
 	int layersCount = 5;
 	netDesc.branching = new int[] { 3, 0, 2, 0, 1 };
-	//netDesc.branching = new int[layersCount] { 1, 1 };
-	netDesc.defaultKernelOrigin = { 10, 10 };
-	netDesc.defaultKernelSize = 20;
+	netDesc.defaultKernelOrigin = { 5, 5 };
+	netDesc.defaultKernelSize = 10;
 	netDesc.defaultPoolingSize = { 2, 2 };
 	ConvNeuralNetwork net({ width, height }, layersCount, netDesc);
-	net.setAllWeightsRandom(293, -1, 1, 1000);
+	net.setAllWeightsRandom(746, -1, 1, 1000);
 
 	inputData = new double* [net.matrices[0][0]->matrixSizeX];
 	for (int x = 0; x < net.matrices[0][0]->matrixSizeX; x++)
@@ -272,6 +273,22 @@ void mainDeconv()
 		}
 	}
 
+	//intputMatrix[0][0] = 0;
+	//intputMatrix[1][0] = 0.1;
+	//intputMatrix[0][1] = 0.2;
+	//intputMatrix[1][1] = 0.3;
+
+
+	//net.matrices[1][0]->kernel[0][0] = 1;
+	//net.matrices[1][0]->kernel[1][0] = 2;
+	//net.matrices[1][0]->kernel[2][0] = 3;
+	//net.matrices[1][0]->kernel[0][1] = 2;
+	//net.matrices[1][0]->kernel[1][1] = 1;
+	//net.matrices[1][0]->kernel[2][1] = 0;
+	//net.matrices[1][0]->kernel[0][2] = 1;
+	//net.matrices[1][0]->kernel[1][2] = 0;
+	//net.matrices[1][0]->kernel[2][2] = 1;
+
 	int lastNeuronsCount = 0;
 	for (int m = 0; m < net.matricesCount[net.layersCount - 1]; m++)
 		lastNeuronsCount += net.matrices[net.layersCount - 1][m]->matrixSizeX * net.matrices[net.layersCount - 1][m]->matrixSizeY;
@@ -279,14 +296,29 @@ void mainDeconv()
 	double* outputData = new double[lastNeuronsCount];
 	for (int i = 0; i < lastNeuronsCount; i++)
 		outputData[i] = (rand() % 1000) / 1000.0;
+	//outputData[0] = 0.5;
+	//outputData[1] = 0.6;
+	//outputData[2] = 0;
+	//outputData[3] = 0.1;
+	// 
+	//net.forwardPropagation(intputMatrix, width * height * sizeof(double));
+	//printNeuralNet(net);
+	//std::cout << std::endl << std::endl << std::endl;
+	//net.backPropagation(outputData, lastNeuronsCount * sizeof(double), 0.01f, 0.3f);
+	//printKernel(net.matrices[1][0]);
 
-	int countGeneration = 1000000;
+	int countGeneration = 10000000;
 	for (int g = 0; g < countGeneration; g++)
 	{
 		net.forwardPropagation(intputMatrix, net.matrices[0][0]->matrixSizeX * net.matrices[0][0]->matrixSizeY * sizeof(double));
-		net.backPropagation(outputData, lastNeuronsCount * sizeof(double), 0.001f, 0.3f);
+		net.backPropagation(outputData, lastNeuronsCount * sizeof(double), 0.01f, 0.3);
 
 		if (g % 100 == 0)
 			std::cout << net.getError(outputData, lastNeuronsCount * sizeof(double)) << std::endl;
 	}
+}
+
+void main()
+{
+
 }

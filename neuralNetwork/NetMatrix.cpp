@@ -143,16 +143,20 @@ void NetMatrix::convolute(NetMatrix* dest)
 					int posInKernelX = kx - kernelLeftUpX;
 					int posInKernelY = ky - kernelLeftUpY;
 
-					int posInMatrix0X = kx;
-					int posInMatrix0Y = ky;
+					//int posInMatrix0X = kx;
+					//int posInMatrix0Y = ky;
 
-					if (posInMatrix0X < 0) posInMatrix0X = 0;
-					if (posInMatrix0Y < 0) posInMatrix0Y = 0;
+					//if (posInMatrix0X < 0) posInMatrix0X = 0;
+					//if (posInMatrix0Y < 0) posInMatrix0Y = 0;
 
-					if (posInMatrix0X >= matrixSizeX) posInMatrix0X = matrixSizeX - 1;
-					if (posInMatrix0Y >= matrixSizeY) posInMatrix0Y = matrixSizeY - 1;
+					//if (posInMatrix0X >= matrixSizeX) posInMatrix0X = matrixSizeX - 1;
+					//if (posInMatrix0Y >= matrixSizeY) posInMatrix0Y = matrixSizeY - 1;
 
-					dest->matrix[x][y] += matrix[posInMatrix0X][posInMatrix0Y] * dest->kernel[posInKernelX][posInKernelY];
+					//dest->matrix[x][y] += matrix[posInMatrix0X][posInMatrix0Y] * dest->kernel[posInKernelX][posInKernelY];
+
+					if(kx >= 0 && kx < matrixSizeX)
+						if(ky >= 0 && ky < matrixSizeY)
+							dest->matrix[x][y] += matrix[kx][ky] * dest->kernel[posInKernelX][posInKernelY];
 				}
 			dest->matrix[x][y] = sigmoid(dest->matrix[x][y]);
 		}
