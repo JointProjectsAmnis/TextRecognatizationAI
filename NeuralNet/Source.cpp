@@ -178,7 +178,7 @@ void main()
 	}
 }
 
-void mainDeconv()
+void conv()
 {
 	const char* pathInput = "..\\Images\\Input\\image.png";
 	const char* pathTeather = "..\\Images\\Teather\\*";
