@@ -178,7 +178,7 @@ void mainWinAPI()
 	}
 }
 
-void conv()
+void main()
 {
 	const char* pathInput = "..\\Images\\Input\\image.png";
 	const char* pathTeather = "..\\Images\\Teather\\*";
@@ -266,7 +266,7 @@ void conv()
 	}
 }
 
-int main()
+void main1()
 {
 
 }
