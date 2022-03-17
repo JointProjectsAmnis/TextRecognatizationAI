@@ -178,7 +178,7 @@ void mainWinAPI()
 	}
 }
 
-void main()
+void conv()
 {
 	const char* pathInput = "..\\Images\\Input\\image.png";
 	const char* pathTeather = "..\\Images\\Teather\\*";
@@ -248,32 +248,7 @@ void main()
 	//outputData[1] = 0.6;
 	//outputData[2] = 0;
 	//outputData[3] = 0.1;
-
-	//NetMatrix* matrixA = new NetMatrix(2, 2, 3, 1, 1, 1);
-	//NetMatrix* matrixB = new NetMatrix(2, 2, 3, 1, 1, 1);
-
-	//matrixA->matrix[0][0] = 0;
-	//matrixA->matrix[1][0] = 0.1;
-	//matrixA->matrix[0][1] = 0.2;
-	//matrixA->matrix[1][1] = 0.3;
-
-	//matrixB->kernel[0][0] = 1;
-	//matrixB->kernel[1][0] = 2;
-	//matrixB->kernel[2][0] = 3;
-	//matrixB->kernel[0][1] = 2;
-	//matrixB->kernel[1][1] = 1;
-	//matrixB->kernel[2][1] = 0;
-	//matrixB->kernel[0][2] = 1;
-	//matrixB->kernel[1][2] = 0;
-	//matrixB->kernel[2][2] = 1;
-	 
-	//matrixA->convolute(matrixB);
-
-	//printMatrix(matrixB);
-
-	//delete matrixA;
-	//delete matrixB;
-
+	// 
 	//net.forwardPropagation(intputMatrix, width * height * sizeof(double));
 	//printNeuralNet(net);
 	//std::cout << std::endl << std::endl << std::endl;
@@ -289,4 +264,9 @@ void main()
 		if (g % 100 == 0)
 			std::cout << net.getError(outputData, lastNeuronsCount * sizeof(double)) << std::endl;
 	}
+}
+
+int main()
+{
+
 }
