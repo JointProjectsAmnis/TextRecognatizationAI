@@ -24,7 +24,7 @@ public:
 	DECL Perceptron(int layersCount, int* neuronsInLayerCount);
 	DECL ~Perceptron();
 	DECL double sigmoid(double x);
-	DECL void frontPropagation(float* inputData);
+	DECL void forwardPropagation(float* inputData);
 	DECL float backPropagation(float* t, float a, float k);
 	DECL void use(float* inputData, float* outputData);
 	DECL float getError(float* t);

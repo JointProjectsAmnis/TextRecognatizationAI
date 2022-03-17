@@ -91,31 +91,13 @@ void mainGraphic()
 
 
 
-//#include <iostream>
-//#include "Data/ImageData.h"
+
 #include <soil.h>
 #include <windows.h>
 
-//#include "PathManager.h"
-//#include "Data/ImageData.h"
-//#include "Data/SampleData.h"
-//#include "Data/Samples/SampleImage.h"
-//#include "NeuralNet/NeuralNetDebug.cuh"
-//#include "Data/ImageData.h"
 #include "DeconvNeuralNetwork.h"
 #include "ConvNeuralNetwork.h"
-
-
-//INeuralNet* getNeuralNet(int sizeX, int sizeY, int channel)
-//{
-//	return new NeuralNetDebug(sizeX, sizeY, channel);
-//}
-//
-//struct Sample
-//{
-//	double* inputData;
-//	double** teatherData;
-//};
+#include "Perceptron.h"
 
 
 void chToFl(unsigned char* chImage, double*& outFImage, int sizeX, int sizeY, int channel)
@@ -318,7 +300,48 @@ void conv()
 	}
 }
 
+
 void main()
 {
+	int samplesCount = 100;
+	Perceptron::Sample* samples = new Perceptron::Sample[samplesCount];
+
+	for (int i = 0; i < samplesCount; i++)
+	{
+		samples[i].inputData = new float[2];
+		samples[i].inputData[0] = (rand() % 1000) / 1000.0f;
+		samples[i].inputData[1] = (rand() % 1000) / 1000.0f;
+
+		samples[i].outputData = new float();
+		samples[i].outputData[0] = samples[i].inputData[0] * samples[i].inputData[1];
+	}
+
+	int* neuronsInLayerCount = new int[] {2, 5, 5, 5, 1};
+	Perceptron perceptron(5, neuronsInLayerCount);
+
+	
+
+	int generationsCount = 10000;
+	for (int i = 0; i < generationsCount; i++)
+	{
+		int randID = rand() % samplesCount;
+		perceptron.forwardPropagation(samples[randID].inputData);
+		perceptron.backPropagation(samples[randID].outputData, 0.01f, 0.3f);
+
+		if(i % 1000)
+			std::cout << "Net answer: " << perceptron.neurons[perceptron.layersCount - 1][0] << ", right answer: " << samples[randID].inputData[0] * samples[randID].inputData[1] << std::endl;
+	}
+
+	while (true)
+	{
+		float input[2]{};
+		std::cin >> input[0];
+		std::cin >> input[1];
+
+		perceptron.forwardPropagation(input);
+
+		std::cout << "Net answer: " << perceptron.neurons[perceptron.layersCount - 1][0] << ", right answer: " << input[0] * input[1] << std::endl;
+	}
+
 
 }

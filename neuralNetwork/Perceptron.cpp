@@ -116,7 +116,7 @@ float Perceptron::updateErrors(float* t)
 	return error;
 }
 
-void Perceptron::frontPropagation(float* inputData)
+void Perceptron::forwardPropagation(float* inputData)
 {
 	for (int n = 0; n < neuronsCountInLayer[0] - biosesInLayerCount; n++)
 		neurons[0][n] = inputData[n];
@@ -154,7 +154,7 @@ void Perceptron::use(float* inputData, float* outputData)
 	float test = neurons[layersCount - 1][0];
 	float inputData0 = inputData[0];
 	float inputData1 = inputData[1];
-	frontPropagation(inputData);
+	forwardPropagation(inputData);
 	test = neurons[layersCount - 1][0];
 
 	for (int n = 0; n < neuronsCountInLayer[layersCount - 1] - biosesInLayerCount; n++)
@@ -175,7 +175,7 @@ float Perceptron::getTotalError(Sample* samples, int samplesCount)
 
 	for (int i = 0; i < samplesCount; i++)
 	{
-		frontPropagation(samples[i].inputData);
+		forwardPropagation(samples[i].inputData);
 		totalError += getError(samples[i].outputData) / (float)samplesCount;
 	}
 
