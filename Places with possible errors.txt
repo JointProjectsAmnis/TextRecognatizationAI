@@ -35,9 +35,11 @@ Some places with possible errors:
 
 ----------------Convolution neural network-------------------------------
 
-1) NetMatrix.pool (Here less possible be error)
-2) NetMatrix.convolute
-3) ConvNeuralNetwork.calculateErrors (outputID)
+1) x(NetMatrix.pool (Here less possible be error))
+2) x(NetMatrix.convolute)
+3) x(ConvNeuralNetwork.calculateErrors (outputID))
+4) ConvNeuralNetwork.calculateErrors (Pooling)
+5) 
 
 
 
