@@ -86,6 +86,11 @@ void Graphics::Draw(Shader* shader, VertexBuffer* vertexBuffer)
 	context->Draw(vertexBuffer->vertexCount, 0);
 }
 
+void Graphics::Dispatch(UINT ThreadGroupCountX,UINT ThreadGroupCountY, UINT ThreadGroupCountZ)
+{
+	context->Dispatch(ThreadGroupCountX, ThreadGroupCountY, ThreadGroupCountZ);
+}
+
 void Graphics::Display()
 {
 	swapchain->Present(0, 0);

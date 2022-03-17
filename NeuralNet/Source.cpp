@@ -9,6 +9,137 @@ processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 
 //Compute shader
 #include "WindowsClasses/DirectX3D/Shaders/ShaderCompute.h"
+#include "WindowsClasses/DirectX3D/UnorderedBuffer.h"
+
+
+void main()
+{
+	setlocale(LC_ALL, "ru");
+	CoInitializeEx(NULL, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);
+	Content::Load();
+
+	WindowInterfaceForNeuralNet* windowInterface = new WindowInterfaceForNeuralNet(Content::brushBackground, Content::brushIdentity, Content::brushHot, Content::brushSelected, *Content::font);
+	windowInterface->ShowWindowInterface(1);
+
+	GraphicsContextImage* graphicsContextImage = new GraphicsContextImage(windowInterface);
+	windowInterface->SetGraphics(graphicsContextImage);
+
+	ShaderCompute shader = ShaderCompute(graphicsContextImage->graphics, L"WindowsClasses\\DirectX3D\\Shaders\\ShaderComputeTest\\ShaderComputeTest.hlsl");
+	
+	int sizeData = 1024;
+	float* buffer = new float[sizeData];
+	for (int x = 0; x < sizeData; x++)
+		buffer[x] = 123;
+
+	//Инициализация буффера, куда будут записываться данные
+	ID3D11Buffer* outputBuffer;
+	D3D11_BUFFER_DESC desc = {};
+	desc.Usage				 = D3D11_USAGE_DEFAULT;
+	desc.ByteWidth			 = sizeof(float) * sizeData;
+	desc.BindFlags			 = D3D11_BIND_UNORDERED_ACCESS;
+	desc.CPUAccessFlags		 = D3D11_CPU_ACCESS_WRITE;
+	desc.StructureByteStride = sizeof(float);
+	desc.MiscFlags			 = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
+
+	HRESULT hr = graphicsContextImage->graphics->device->CreateBuffer(&desc, NULL, &outputBuffer);
+	if (FAILED(hr)) throw;
+
+	//Создание view для outputBuffer
+	ID3D11UnorderedAccessView* unorderedView;
+	D3D11_UNORDERED_ACCESS_VIEW_DESC uavDesc = {};
+	uavDesc.Buffer.FirstElement = 0;
+	uavDesc.Buffer.Flags		= 0;
+	uavDesc.Buffer.NumElements	= sizeData;
+	uavDesc.Format				= DXGI_FORMAT_UNKNOWN;
+	uavDesc.ViewDimension		= D3D11_UAV_DIMENSION_BUFFER;
+
+	hr = graphicsContextImage->graphics->device->CreateUnorderedAccessView(outputBuffer, &uavDesc, &unorderedView);
+	if (FAILED(hr)) throw;
+
+	//Инициализация буффера, из которого данные будут забираться на CPU
+	ID3D11Buffer* outputBufferResult;
+	desc.Usage			= D3D11_USAGE_STAGING;
+	desc.BindFlags		= 0;
+	desc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
+
+	hr = graphicsContextImage->graphics->device->CreateBuffer(&desc, NULL, &outputBufferResult);
+	if (FAILED(hr)) throw;
+
+	
+	//Запуск вычислительного шейдера
+	graphicsContextImage->graphics->context->CSSetUnorderedAccessViews(0, 1, &unorderedView, 0);
+	shader.BindShader();
+	graphicsContextImage->graphics->Dispatch(32, 32, 1);
+
+
+	//Копирование результата работы вычислительного шейдерена на CPU
+	graphicsContextImage->graphics->context->CopyResource(outputBufferResult, outputBuffer);
+	
+	D3D11_MAPPED_SUBRESOURCE mappedResource;
+	hr = graphicsContextImage->graphics->context->Map(outputBufferResult, 0, D3D11_MAP_READ, 0, &mappedResource);
+	if (FAILED(hr)) throw;
+
+	memcpy(buffer, mappedResource.pData, sizeData * sizeof(float));
+
+	graphicsContextImage->graphics->context->Unmap(outputBufferResult, 0);
+
+
+	//Выведение результата
+	for (int x = 0; x < sizeData; x++)
+		std::cout << buffer[x] << std::endl;
+	
+	
+ 	UnorderedBuffer unorderedBuffer = UnorderedBuffer(graphicsContextImage->graphics, sizeData, sizeof(float), buffer);
+
+	shader.BindShader();
+	unorderedBuffer.Bind(0);
+	graphicsContextImage->graphics->Dispatch(32, 32, 1);
+
+	unorderedBuffer.Map(D3D11_MAP_WRITE_DISCARD); //Нужно узнать, как считывать данные с unordered buffer
+	unorderedBuffer.CopyMem(buffer, sizeData, 0);
+	unorderedBuffer.UnMap();
+
+	MSG msg = {};
+	while (!windowInterface->windowMain->isClosed)
+	{
+		while (PeekMessage(&msg, 0, 0, 0, PM_REMOVE))
+		{
+			TranslateMessage(&msg);
+			DispatchMessage(&msg);
+		}
+
+		graphicsContextImage->Draw();
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -148,33 +279,6 @@ void printKernel(NetMatrix* matrix)
 			std::cout << matrix->kernel[x][y] << " ";
 		}
 		std::cout << std::endl;
-	}
-}
-
-void main()
-{
-	setlocale(LC_ALL, "ru");
-	CoInitializeEx(NULL, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);
-	Content::Load();
-
-	WindowInterfaceForNeuralNet* windowInterface = new WindowInterfaceForNeuralNet(Content::brushBackground, Content::brushIdentity, Content::brushHot, Content::brushSelected, *Content::font);
-	windowInterface->ShowWindowInterface(1);
-
-	GraphicsContextImage* graphicsContextImage = new GraphicsContextImage(windowInterface);
-	windowInterface->SetGraphics(graphicsContextImage);
-
-	//ShaderCompute shader = ShaderCompute(graphicsContextImage->graphics, L"WindowsClasses\\DirectX3D\\Shaders\\ShaderComputeTest\\ShaderComputeTest.hlsl");
-
-	MSG msg = {};
-	while (!windowInterface->windowMain->isClosed)
-	{
-		while (PeekMessage(&msg, 0, 0, 0, PM_REMOVE))
-		{
-			TranslateMessage(&msg);
-			DispatchMessage(&msg);
-		}
-
-		graphicsContextImage->Draw();
 	}
 }
 

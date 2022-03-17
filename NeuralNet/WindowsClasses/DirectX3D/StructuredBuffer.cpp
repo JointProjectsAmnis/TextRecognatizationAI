@@ -33,7 +33,7 @@ StructuredBuffer::StructuredBuffer(Graphics* graphics, void* data, UINT stride, 
 	this->graphics = graphics;
 
 	D3D11_BUFFER_DESC sbDesc;
-	sbDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+	sbDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_UNORDERED_ACCESS; //Возможно из-за D3D11_BIND_UNORDERED_ACCESS может сломаться
 	sbDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	sbDesc.Usage = D3D11_USAGE_DYNAMIC;
 	sbDesc.StructureByteStride = stride;
@@ -74,4 +74,9 @@ void StructuredBuffer::UploadData(void* data, UINT sizeData)
 void StructuredBuffer::Bind(UINT slot)
 {
 	graphics->context->PSSetShaderResources(slot, 1, &shaderResource);
+}
+
+void StructuredBuffer::BindForCompute(UINT slot)
+{
+	graphics->context->CSSetShaderResources(slot, 1, &shaderResource);
 }

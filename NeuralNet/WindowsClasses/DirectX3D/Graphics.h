@@ -25,6 +25,7 @@ public:
 
 	void Clear(const FLOAT* color);
 	void Draw(Shader* shader, VertexBuffer* vertexBuffer);
+	void Dispatch(UINT ThreadGroupCountX, UINT ThreadGroupCountY, UINT ThreadGroupCountZ); //Запустить компьютерный шейдер
 	void Display();
 };
 

@@ -15,6 +15,8 @@ public:
 	~StructuredBuffer();
 
 	void UploadData(void* data, UINT sizeData);
+
 	void Bind(UINT slot);
+	void BindForCompute(UINT slot);
 };
 
