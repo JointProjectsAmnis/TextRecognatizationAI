@@ -92,6 +92,7 @@
     <CudaCompile Include="kernel.cu" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Data\ImageLoader.h" />
     <ClInclude Include="WindowsClasses\DirectX3D\UnorderedBuffer.h" />
     <ClInclude Include="Window application\Content.h" />
     <ClInclude Include="Window application\GraphicsContextImage.h" />
@@ -131,6 +132,7 @@
     <ClInclude Include="TextureMemory.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Data\ImageLoader.cpp" />
     <ClCompile Include="WindowsClasses\DirectX3D\UnorderedBuffer.cpp" />
     <ClCompile Include="Window application\Content.cpp" />
     <ClCompile Include="Window application\GraphicsContextImage.cpp" />

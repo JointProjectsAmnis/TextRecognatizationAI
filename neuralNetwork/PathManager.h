@@ -1,5 +1,4 @@
 #pragma once
-#include "../Decl.h"
 #include <windows.h>
 #include <iostream>
 #include <vector>

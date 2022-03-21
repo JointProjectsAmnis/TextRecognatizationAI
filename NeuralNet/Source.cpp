@@ -105,6 +105,8 @@ void mainGraphic()
 #include "DeconvNeuralNetwork.h"
 #include "ConvNeuralNetwork.h"
 
+#include "Data/ImageLoader.h"
+
 
 //INeuralNet* getNeuralNet(int sizeX, int sizeY, int channel)
 //{
@@ -320,5 +322,127 @@ void conv()
 
 void main()
 {
+	const char* path = "E:\\Кодинг\\Распознавание символов с изображения\\NeuralNet\\Images\\Teather\\*";
 
+	int sizeImageX;
+	int sizeImageY;
+	int countChannels = 3;
+	
+	int countImages;
+
+	//Загрузка изображений
+	ImageLoader imageLoader = ImageLoader((char*)path, countChannels);
+	sizeImageX = imageLoader.sizeImageX;
+	sizeImageY = imageLoader.sizeImageY;
+	countImages = imageLoader.countImages;
+
+	double**** images = new double***[countImages];
+	for (int i = 0; i < countImages; i++)
+	{
+		images[i] = new double** [countChannels];
+		for (int c = 0; c < countChannels; c++)
+		{
+			images[i][c] = new double* [sizeImageX];
+			for (int x = 0; x < sizeImageX; x++)
+			{
+				images[i][c][x] = new double[sizeImageY];
+				for (int y = 0; y < sizeImageY; y++)
+					images[i][c][x][y] = imageLoader.imageDouble[i][(x + y * sizeImageX) * countChannels + c];
+			}
+		}
+	}
+
+
+
+
+	//Создание нейроной сети
+	DeconvNeuralNetwork::DevconvNeuralNetDesc desc = {};
+	desc.branching = new int[]{2, 0, 10, 0, 3};
+	int layersCount = 5;
+	desc.defaultKernelSize = 10;
+	desc.defaultKernelOrigin = {5, 5};
+	desc.defaultUnpoolingSize = {4, 4};
+
+	DeconvNeuralNetwork** net = new DeconvNeuralNetwork*[countChannels];
+	for (int x = 0; x < countChannels; x++)
+		net[x] = new DeconvNeuralNetwork({sizeImageX, sizeImageY}, layersCount, desc);
+
+	//Создание входных данных
+	int inputCount = net[0]->matrices[0][0]->matrixSizeX * net[0]->matrices[0][0]->matrixSizeX * net[0]->matricesCount[0];
+	
+	double*** inputData = new double**[countImages];
+	for (int x = 0; x < countImages; x++)
+	{
+		inputData[x] = new double*[countChannels];
+		for (int y = 0; y < countChannels; y++)
+		{
+			inputData[x][y] = new double[inputCount];
+			for (int z = 0; z < inputCount; z++)
+				inputData[x][y][z] = (rand() % 1000) / 1000.0f;
+		}
+	}
+
+	unsigned char* image = new unsigned char[sizeImageX * sizeImageY * countChannels];
+
+	int g = 0;
+	//Обучение сети
+	while (true)
+	{
+		int sampleId = rand() % countImages;
+		for (int x = 0; x < countChannels; x++)
+		{
+			net[x]->forwardPropagation(inputData[sampleId][x], inputCount * sizeof(double));
+			net[x]->backPropagation(images[sampleId][x], sizeImageX * sizeImageY * sizeof(double), 0.00001, 0.3f);
+		}
+
+
+		if (g % 5 == 0)
+		{
+			for (int x = 0; x < sizeImageX; x++)
+				for (int y = 0; y < sizeImageY; y++)
+					for (int c = 0; c < countChannels; c++)
+						image[(x + y * sizeImageX) * countChannels + c] = net[c]->matrices[layersCount - 1][0]->matrix[x][y] * 255;
+
+
+			SOIL_save_image("E:\\Кодинг\\Распознавание символов с изображения\\NeuralNet\\Images\\image.bmp",
+				SOIL_SAVE_TYPE_BMP, sizeImageX, sizeImageY, countChannels, image);
+
+			net[0]->forwardPropagation(inputData[0][0], inputCount * sizeof(double));
+			std::cout << net[0]->getError(images[0][0], sizeImageX * sizeImageY * sizeof(double)) << std::endl;
+		}
+
+		g++;
+	}
+	
+	double*** matrix = new double**[countChannels];
+	for (int c = 0; c < countChannels; c++)
+	{
+		matrix[c] = new double* [sizeImageX];
+		for (int x = 0; x < sizeImageX; x++)
+			matrix[c][x] = new double[sizeImageY];
+	}
+	
+	while (true)
+	{
+		for (int c = 0; c < countChannels; c++)
+			for (int x = 0; x < sizeImageX; x++)
+				for (int y = 0; y < sizeImageY; y++)
+					matrix[c][x][y] = (rand() % 1000) / 1000.0;
+
+		for (int x = 0; x < countChannels; x++)
+			net[x]->forwardPropagation(matrix[x], inputCount * sizeof(double));
+
+
+
+		unsigned char* image = new unsigned char[sizeImageX * sizeImageY * countChannels];
+		for (int x = 0; x < sizeImageX; x++)
+			for (int y = 0; y < sizeImageY; y++)
+				for (int c = 0; c < countChannels; c++)
+					image[(x + y * sizeImageX) * countChannels + c] = net[c]->matrices[layersCount - 1][0]->matrix[x][y] * 255;
+
+
+		SOIL_save_image("E:\\Кодинг\\Распознавание символов с изображения\\NeuralNet\\Images\\image.bmp",
+			SOIL_SAVE_TYPE_BMP, sizeImageX, sizeImageY, countChannels, image);
+	}
+	
 }

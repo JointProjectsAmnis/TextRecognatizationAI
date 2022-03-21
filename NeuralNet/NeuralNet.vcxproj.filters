@@ -41,6 +41,7 @@
     <ClInclude Include="WindowsClasses\DirectX3D\StructuredBuffer.h" />
     <ClInclude Include="WindowsClasses\DirectX3D\Shaders\ShaderCompute.h" />
     <ClInclude Include="WindowsClasses\DirectX3D\UnorderedBuffer.h" />
+    <ClInclude Include="Data\ImageLoader.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Data\Image.cpp" />
@@ -70,6 +71,7 @@
     <ClCompile Include="WindowsClasses\DirectX3D\StructuredBuffer.cpp" />
     <ClCompile Include="WindowsClasses\DirectX3D\Shaders\ShaderCompute.cpp" />
     <ClCompile Include="WindowsClasses\DirectX3D\UnorderedBuffer.cpp" />
+    <ClCompile Include="Data\ImageLoader.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
