@@ -82,5 +82,6 @@
     <FxCompile Include="WindowsClasses\DirectX3D\Shaders\ShaderImage\ShaderVertexImage.hlsl" />
     <FxCompile Include="WindowsClasses\DirectX3D\Shaders\ShaderImage\ShaderPixelImage.hlsl" />
     <FxCompile Include="WindowsClasses\DirectX3D\Shaders\ShaderComputeTest\ShaderComputeTest.hlsl" />
+    <FxCompile Include="WindowsClasses\DirectX3D\Shaders\ShaderComputeTexture\ShaderComputeTexture.hlsl" />
   </ItemGroup>
 </Project>

@@ -11,8 +11,15 @@ processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 #include "WindowsClasses/DirectX3D/Shaders/ShaderCompute.h"
 #include "WindowsClasses/DirectX3D/UnorderedBuffer.h"
 
+struct float4
+{
+	float x;
+	float y;
+	float z;
+	float w;
+};
 
-void mainGraphic()
+void main()
 {
 	setlocale(LC_ALL, "ru");
 	CoInitializeEx(NULL, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);
@@ -24,28 +31,75 @@ void mainGraphic()
 	GraphicsContextImage* graphicsContextImage = new GraphicsContextImage(windowInterface);
 	windowInterface->SetGraphics(graphicsContextImage);
 
-	ShaderCompute shader = ShaderCompute(graphicsContextImage->graphics, L"WindowsClasses\\DirectX3D\\Shaders\\ShaderComputeTest\\ShaderComputeTest.hlsl");
+	ShaderCompute shaderTexture = ShaderCompute(graphicsContextImage->graphics, L"WindowsClasses\\DirectX3D\\Shaders\\ShaderComputeTexture\\ShaderComputeTexture.hlsl");
 
-	int sizeData = 1024;
-	float* buffer = new float[sizeData];
-	for (int x = 0; x < sizeData; x++)
-		buffer[x] = 123;
+	int sizeImageX = 1;
+	int sizeImageY = 1;
+	int threadsCountX = 8;
+	int threadsCountY = 8;
+	Texture* texture = new Texture(graphicsContextImage->graphics, sizeImageX * threadsCountX, sizeImageY * threadsCountY, 4, DXGI_FORMAT_R32G32B32A32_FLOAT);
+	Texture* textureResult = new Texture(graphicsContextImage->graphics, sizeImageX * threadsCountX, sizeImageY * threadsCountY, 4, DXGI_FORMAT_R32G32B32A32_FLOAT, D3D11_USAGE_STAGING, 0, D3D11_CPU_ACCESS_READ);
 
-	UnorderedBuffer outputBuffer = UnorderedBuffer(graphicsContextImage->graphics, sizeData, sizeof(float), buffer);
-	UnorderedBuffer outputBufferResult = UnorderedBuffer(graphicsContextImage->graphics, sizeData, sizeof(float), D3D11_USAGE_STAGING, 0, D3D11_CPU_ACCESS_READ);
+	float4** buffer = new float4 * [sizeImageX * threadsCountX];
+	for (int x = 0; x < sizeImageX * threadsCountX; x++)
+	{
+		buffer[x] = new float4[sizeImageY * threadsCountY];
+		for (int y = 0; y < sizeImageY * threadsCountY; y++)
+			buffer[x][y] = {0.5f, 0.5f, 0.5f, 1};
+	}
 
-	outputBuffer.Bind(0);
-	shader.BindShader();
-	graphicsContextImage->graphics->Dispatch(32, 32, 1);
+	shaderTexture.BindShader();
+	graphicsContextImage->graphics->context->CSSetUnorderedAccessViews(0, 1, &texture->unorderedView, nullptr);
+	graphicsContextImage->graphics->Dispatch(sizeImageX, sizeImageY * threadsCountY, 1);
 
-	outputBufferResult.CopyResource(outputBuffer.buffer);
 
-	outputBufferResult.Map(D3D11_MAP_READ);
-	outputBufferResult.ReadMem(buffer, sizeData * sizeof(float), 0);
-	outputBufferResult.UnMap();
+	graphicsContextImage->graphics->context->CopyResource(textureResult->texture, texture->texture);
+	
+	D3D11_MAPPED_SUBRESOURCE sb;
+	HRESULT hr = graphicsContextImage->graphics->context->Map(textureResult->texture, 0, D3D11_MAP_READ, 0, &sb);
+	if (FAILED(hr)) throw;
 
-	for (int x = 0; x < sizeData; x++)
-		std::cout << buffer[x] << std::endl;
+	for (int y = 0; y < sizeImageY * threadsCountY; y++)
+		for (int x = 0; x < sizeImageX * threadsCountX; x++)
+			//buffer[x][y] = *((float4*)sb.pData + x + y * sizeImageX);
+			buffer[x][y] = *((float4*)sb.pData + x + y * (sizeImageX * threadsCountX));
+
+	//for (int x = 0; x < sizeImageX * sizeImageY; x++)
+	//	std::cout << ((float4*)sb.pData + x)->x << std::endl;
+
+	graphicsContextImage->graphics->context->Unmap(textureResult->texture, 0);
+
+	for (int y = 0; y < sizeImageY * threadsCountY; y++)
+	{
+		for (int x = 0; x < sizeImageX * threadsCountX; x++)
+			std::cout << buffer[x][y].x << " ";
+		std::cout << std::endl;
+	}
+
+	int point = 0;
+	
+	//ShaderCompute shader = ShaderCompute(graphicsContextImage->graphics, L"WindowsClasses\\DirectX3D\\Shaders\\ShaderComputeTest\\ShaderComputeTest.hlsl");
+
+	//int sizeData = 1024;
+	//float* buffer = new float[sizeData];
+	//for (int x = 0; x < sizeData; x++)
+	//	buffer[x] = 123;
+
+	//UnorderedBuffer outputBuffer = UnorderedBuffer(graphicsContextImage->graphics, sizeData, sizeof(float), buffer);
+	//UnorderedBuffer outputBufferResult = UnorderedBuffer(graphicsContextImage->graphics, sizeData, sizeof(float), D3D11_USAGE_STAGING, 0, D3D11_CPU_ACCESS_READ);
+
+	//outputBuffer.Bind(0);
+	//shader.BindShader();
+	//graphicsContextImage->graphics->Dispatch(32, 32, 1);
+
+	//outputBufferResult.CopyResource(outputBuffer.buffer);
+
+	//outputBufferResult.Map(D3D11_MAP_READ);
+	//outputBufferResult.ReadMem(buffer, sizeData * sizeof(float), 0);
+	//outputBufferResult.UnMap();
+
+	//for (int x = 0; x < sizeData; x++)
+	//	std::cout << buffer[x] << std::endl;
 
 	MSG msg = {};
 	while (!windowInterface->windowMain->isClosed)
@@ -55,7 +109,6 @@ void mainGraphic()
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
 		}
-
 		graphicsContextImage->Draw();
 	}
 }
@@ -260,7 +313,6 @@ void conv()
 	//intputMatrix[0][1] = 0.2;
 	//intputMatrix[1][1] = 0.3;
 
-
 	//net.matrices[1][0]->kernel[0][0] = 1;
 	//net.matrices[1][0]->kernel[1][0] = 2;
 	//net.matrices[1][0]->kernel[2][0] = 3;
@@ -301,7 +353,7 @@ void conv()
 }
 
 
-void main()
+void mainPerceptron()
 {
 	int samplesCount = 100;
 	Perceptron::Sample* samples = new Perceptron::Sample[samplesCount];
