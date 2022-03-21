@@ -91,17 +91,10 @@ void mainGraphic()
 
 
 
-//#include <iostream>
-//#include "Data/ImageData.h"
+
 #include <soil.h>
 #include <windows.h>
 
-//#include "PathManager.h"
-//#include "Data/ImageData.h"
-//#include "Data/SampleData.h"
-//#include "Data/Samples/SampleImage.h"
-//#include "NeuralNet/NeuralNetDebug.cuh"
-//#include "Data/ImageData.h"
 #include "DeconvNeuralNetwork.h"
 #include "ConvNeuralNetwork.h"
 
@@ -118,6 +111,7 @@ void mainGraphic()
 //	double* inputData;
 //	double** teatherData;
 //};
+#include "Perceptron.h"
 
 
 void chToFl(unsigned char* chImage, double*& outFImage, int sizeX, int sizeY, int channel)
@@ -320,6 +314,7 @@ void conv()
 	}
 }
 
+
 void main()
 {
 	const char* path = "E:\\Кодинг\\Распознавание символов с изображения\\NeuralNet\\Images\\Teather\\*";
@@ -327,7 +322,7 @@ void main()
 	int sizeImageX;
 	int sizeImageY;
 	int countChannels = 3;
-	
+
 	int countImages;
 
 	//Загрузка изображений
@@ -336,7 +331,7 @@ void main()
 	sizeImageY = imageLoader.sizeImageY;
 	countImages = imageLoader.countImages;
 
-	double**** images = new double***[countImages];
+	double**** images = new double*** [countImages];
 	for (int i = 0; i < countImages; i++)
 	{
 		images[i] = new double** [countChannels];
@@ -353,27 +348,66 @@ void main()
 	}
 
 
+	//int samplesCount = 100;
+	//Perceptron::Sample* samples = new Perceptron::Sample[samplesCount];
+
+	//for (int i = 0; i < samplesCount; i++)
+	//{
+	//	samples[i].inputData = new float[2];
+	//	samples[i].inputData[0] = (rand() % 1000) / 1000.0f;
+	//	samples[i].inputData[1] = (rand() % 1000) / 1000.0f;
+
+	//	samples[i].outputData = new float();
+	//	samples[i].outputData[0] = samples[i].inputData[0] * samples[i].inputData[1];
+	//}
+
+	//int* neuronsInLayerCount = new int[] {2, 5, 5, 5, 1};
+	//Perceptron perceptron(5, neuronsInLayerCount);
+
+	//
+
+	//int generationsCount = 10000;
+	//for (int i = 0; i < generationsCount; i++)
+	//{
+	//	int randID = rand() % samplesCount;
+	//	perceptron.forwardPropagation(samples[randID].inputData);
+	//	perceptron.backPropagation(samples[randID].outputData, 0.01f, 0.3f);
+
+	//	if(i % 1000)
+	//		std::cout << "Net answer: " << perceptron.neurons[perceptron.layersCount - 1][0] << ", right answer: " << samples[randID].inputData[0] * samples[randID].inputData[1] << std::endl;
+	//}
+
+	//while (true)
+	//{
+	//	float input[2]{};
+	//	std::cin >> input[0];
+	//	std::cin >> input[1];
+
+	//	perceptron.forwardPropagation(input);
+
+	//	std::cout << "Net answer: " << perceptron.neurons[perceptron.layersCount - 1][0] << ", right answer: " << input[0] * input[1] << std::endl;
+	//}
 
 
 	//Создание нейроной сети
 	DeconvNeuralNetwork::DevconvNeuralNetDesc desc = {};
-	desc.branching = new int[]{2, 0, 10, 0, 3};
+	desc.branching = new int[] {2, 0, 10, 0, 3};
 	int layersCount = 5;
 	desc.defaultKernelSize = 10;
-	desc.defaultKernelOrigin = {5, 5};
-	desc.defaultUnpoolingSize = {4, 4};
+	desc.defaultKernelOrigin = { 5, 5 };
+	desc.defaultUnpoolingSize = { 4, 4 };
 
-	DeconvNeuralNetwork** net = new DeconvNeuralNetwork*[countChannels];
+	DeconvNeuralNetwork** net = new DeconvNeuralNetwork * [countChannels];
 	for (int x = 0; x < countChannels; x++)
-		net[x] = new DeconvNeuralNetwork({sizeImageX, sizeImageY}, layersCount, desc);
+		net[x] = new DeconvNeuralNetwork({ sizeImageX, sizeImageY }, layersCount, desc);
 
 	//Создание входных данных
 	int inputCount = net[0]->matrices[0][0]->matrixSizeX * net[0]->matrices[0][0]->matrixSizeX * net[0]->matricesCount[0];
-	
-	double*** inputData = new double**[countImages];
+
+	double*** inputData = new double** [countImages];
 	for (int x = 0; x < countImages; x++)
 	{
-		inputData[x] = new double*[countChannels];
+		inputData[x] = new double* [countChannels];
 		for (int y = 0; y < countChannels; y++)
 		{
 			inputData[x][y] = new double[inputCount];
@@ -413,15 +447,15 @@ void main()
 
 		g++;
 	}
-	
-	double*** matrix = new double**[countChannels];
+
+	double*** matrix = new double** [countChannels];
 	for (int c = 0; c < countChannels; c++)
 	{
 		matrix[c] = new double* [sizeImageX];
 		for (int x = 0; x < sizeImageX; x++)
 			matrix[c][x] = new double[sizeImageY];
 	}
-	
+
 	while (true)
 	{
 		for (int c = 0; c < countChannels; c++)
@@ -444,5 +478,5 @@ void main()
 		SOIL_save_image("E:\\Кодинг\\Распознавание символов с изображения\\NeuralNet\\Images\\image.bmp",
 			SOIL_SAVE_TYPE_BMP, sizeImageX, sizeImageY, countChannels, image);
 	}
-	
+
 }
