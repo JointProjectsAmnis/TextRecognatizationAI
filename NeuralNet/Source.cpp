@@ -10,6 +10,7 @@ processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 //Compute shader
 #include "WindowsClasses/DirectX3D/Shaders/ShaderCompute.h"
 #include "WindowsClasses/DirectX3D/UnorderedBuffer.h"
+#include "GPUConvNerualNetwork.h"
 
 struct float4
 {
@@ -19,7 +20,7 @@ struct float4
 	float w;
 };
 
-void main()
+void windowMain()
 {
 	setlocale(LC_ALL, "ru");
 	CoInitializeEx(NULL, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);
@@ -394,6 +395,10 @@ void mainPerceptron()
 
 		std::cout << "Net answer: " << perceptron.neurons[perceptron.layersCount - 1][0] << ", right answer: " << input[0] * input[1] << std::endl;
 	}
+}
 
+
+int main() 
+{
 
 }
