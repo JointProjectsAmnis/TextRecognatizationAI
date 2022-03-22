@@ -13,9 +13,9 @@ public:
 	ID3D11Device* device;
 	ID3D11DeviceContext* context;
 	IDXGISwapChain* swapchain;
-	ID3D11RenderTargetView* renderTarget;
+	ID3D11RenderTargetView* renderTarget = nullptr;
 
-	BaseWindow* window;
+	BaseWindow* window = nullptr;
 
 	Graphics(BaseWindow* window);
 	~Graphics();

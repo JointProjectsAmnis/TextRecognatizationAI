@@ -32,17 +32,17 @@ Graphics::Graphics(BaseWindow* window)
 
 	if (FAILED(hr)) throw;
 
-	ID3D11Texture2D* backBuffer;
-	hr = swapchain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)&backBuffer);
-	if (FAILED(hr)) throw;
+		ID3D11Texture2D* backBuffer;
+		hr = swapchain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)&backBuffer);
+		if (FAILED(hr)) throw;
 
 
-	hr = device->CreateRenderTargetView(backBuffer, NULL, &renderTarget);
-	if (FAILED(hr)) throw;
+		hr = device->CreateRenderTargetView(backBuffer, NULL, &renderTarget);
+		if (FAILED(hr)) throw;
 
-	context->OMSetRenderTargets(1, &renderTarget, NULL);
+		context->OMSetRenderTargets(1, &renderTarget, NULL);
 
-	UpdateViewport();
+		UpdateViewport();
 }
 
 Graphics::~Graphics()

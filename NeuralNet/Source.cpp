@@ -20,7 +20,7 @@ struct float4
 	float w;
 };
 
-void windowMain()
+void mainWindow()
 {
 	setlocale(LC_ALL, "ru");
 	CoInitializeEx(NULL, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);
@@ -33,6 +33,7 @@ void windowMain()
 	windowInterface->SetGraphics(graphicsContextImage);
 
 	ShaderCompute shaderTexture = ShaderCompute(graphicsContextImage->graphics, L"WindowsClasses\\DirectX3D\\Shaders\\ShaderComputeTexture\\ShaderComputeTexture.hlsl");
+	ShaderCompute shaderForwardProgation = ShaderCompute(graphicsContextImage->graphics, L"NeuralNetworkShaders/ShaderConvForwardPropagation.hlsl");
 
 	int sizeImageX = 1;
 	int sizeImageY = 1;
@@ -398,7 +399,96 @@ void mainPerceptron()
 }
 
 
-int main() 
+void main() 
 {
+	//HBRUSH backgroundColor = CreateSolidBrush(RGB(255, 255, 255));
+	//Panel win = Panel(L"ConvNeuralNetwork", backgroundColor, NULL);
+	//win.Create(CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT);
+	//win.Show(1);
 
+	//Graphics graphics(&win);
+
+	//int width = 8;
+	//int height = 8;
+
+	//GPUConvNerualNetwork::GPUConvNeuralNetDesc netDesc{};
+	//int layersCount = 2;
+	//netDesc.branching = new int[] { 1, 1};
+	//netDesc.defaultKernelOrigin = { 5, 5 };
+	//netDesc.defaultKernelSize = 10;
+	//netDesc.defaultPoolingSize = { 2, 2 };
+	//GPUConvNerualNetwork net = GPUConvNerualNetwork(&graphics, { width, height }, layersCount, netDesc);
+
+	//net.forwardPropagation(&graphics, nullptr, 0);
+
+
+
+	HBRUSH backgroundColor = CreateSolidBrush(RGB(255, 255, 255));
+	Panel win = Panel(L"ConvNeuralNetwork", backgroundColor, NULL);
+	win.Create(CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT);
+	win.Show(1);
+
+	Graphics graphics(&win);
+
+	int width = 8;
+	int height = 8;
+
+	GPUConvNerualNetwork::GPUConvNeuralNetDesc netDesc{};
+	int layersCount = 2;
+	netDesc.branching = new int[] { 2, 1 };
+	netDesc.defaultKernelOrigin = { 5, 5 };
+	netDesc.defaultKernelSize = 10;
+	netDesc.defaultPoolingSize = { 2, 2 };
+	GPUConvNerualNetwork net = GPUConvNerualNetwork(&graphics, { width, height }, layersCount, netDesc);
+	
+	net.forwardPropagation(&graphics, NULL, NULL);
+
+
+
+	//ShaderCompute shaderTexture = ShaderCompute(&graphics, L"WindowsClasses\\DirectX3D\\Shaders\\ShaderComputeTexture\\ShaderComputeTexture.hlsl");
+	//ShaderCompute shaderForwardProgation = ShaderCompute(&graphics, L"NeuralNetworkShaders/ShaderConvForwardPropagation.hlsl");
+
+	//int sizeImageX = net.matrices[0][0]->matrixSizeX;
+	//int sizeImageY = net.matrices[0][0]->matrixSizeY;
+	//int threadsCountX = 1;
+	//int threadsCountY = 1;
+	////Texture* texture = new Texture(&graphics, sizeImageX * threadsCountX, sizeImageY * threadsCountY, 4, DXGI_FORMAT_R32G32B32A32_FLOAT);
+	//Texture* texture = net.matrices[0][0]->matrix;
+	//Texture* textureResult = new Texture(&graphics, sizeImageX * threadsCountX, sizeImageY * threadsCountY, 4, DXGI_FORMAT_R32G32B32A32_FLOAT, D3D11_USAGE_STAGING, 0, D3D11_CPU_ACCESS_READ);
+
+	//float4** buffer = new float4 * [sizeImageX * threadsCountX];
+	//for (int x = 0; x < sizeImageX * threadsCountX; x++)
+	//{
+	//	buffer[x] = new float4[sizeImageY * threadsCountY];
+	//	for (int y = 0; y < sizeImageY * threadsCountY; y++)
+	//		buffer[x][y] = { 0.5f, 0.5f, 0.5f, 1 };
+	//}
+
+	//shaderForwardProgation.BindShader();
+	//graphics.context->CSSetUnorderedAccessViews(0, 1, &texture->unorderedView, nullptr);
+	//graphics.Dispatch(sizeImageX, sizeImageY * threadsCountY, 1);
+
+
+	//graphics.context->CopyResource(textureResult->texture, texture->texture);
+
+	//D3D11_MAPPED_SUBRESOURCE sb;
+	//HRESULT hr = graphics.context->Map(textureResult->texture, 0, D3D11_MAP_READ, 0, &sb);
+	//if (FAILED(hr)) throw;
+
+	//for (int y = 0; y < sizeImageY * threadsCountY; y++)
+	//	for (int x = 0; x < sizeImageX * threadsCountX; x++)
+	//		//buffer[x][y] = *((float4*)sb.pData + x + y * sizeImageX);
+	//		buffer[x][y] = *((float4*)sb.pData + x + y * (sizeImageX * threadsCountX));
+
+	////for (int x = 0; x < sizeImageX * sizeImageY; x++)
+	////	std::cout << ((float4*)sb.pData + x)->x << std::endl;
+
+	//graphics.context->Unmap(textureResult->texture, 0);
+
+	//for (int y = 0; y < sizeImageY * threadsCountY; y++)
+	//{
+	//	for (int x = 0; x < sizeImageX * threadsCountX; x++)
+	//		std::cout << buffer[x][y].x << " ";
+	//	std::cout << std::endl;
+	//}
 }

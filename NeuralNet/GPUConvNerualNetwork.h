@@ -11,7 +11,7 @@
 class GPUConvNerualNetwork
 {
 public: 
-	struct ConvNeuralNetDesc
+	struct GPUConvNeuralNetDesc
 	{
 		int* branching;
 		int defaultKernelSize;
@@ -45,12 +45,14 @@ public:
 
 
 
-	GPUConvNerualNetwork(Graphics* graphics, mint2 inputMatrixSize, int layersCount, ConvNeuralNetDesc netDesc);
+	GPUConvNerualNetwork(Graphics* graphics, mint2 inputMatrixSize, int layersCount, GPUConvNeuralNetDesc netDesc);
 	~GPUConvNerualNetwork();
 
-	void forwardPropagation();
+	void forwardPropagation(Graphics* graphics, double** inputData, const int inputDataSize);
 	void backPropagation();
 
-
+private:
+	ID3D11UnorderedAccessView*** matricesTextures;
+	ShaderCompute* shaderForwardProgation;
 };
 

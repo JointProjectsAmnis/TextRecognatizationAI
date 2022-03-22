@@ -88,5 +88,6 @@
     <FxCompile Include="WindowsClasses\DirectX3D\Shaders\ShaderImage\ShaderPixelImage.hlsl" />
     <FxCompile Include="WindowsClasses\DirectX3D\Shaders\ShaderComputeTest\ShaderComputeTest.hlsl" />
     <FxCompile Include="WindowsClasses\DirectX3D\Shaders\ShaderComputeTexture\ShaderComputeTexture.hlsl" />
+    <FxCompile Include="NeuralNetworkShaders\ShaderConvForwardPropagation.hlsl" />
   </ItemGroup>
 </Project>
